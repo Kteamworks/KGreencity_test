@@ -103,7 +103,7 @@ foreach ($aColumns as $colname) {
   if ($colname == 'pid') continue;
   $sellist .= ", ";
   if ($colname == 'name') {
-    $sellist .= "fname, lname, mname";
+    $sellist .= "fname, lname, mname,visit_status";
   }
   else {
     $sellist .= "`" . escape_sql_column_name($colname,array('patient_data','form_encounter',)) . "`";
@@ -132,8 +132,15 @@ $query = "SELECT $sellist FROM patient_data  $where  $orderby  $limit ";
 $res = sqlStatement($query);
 while ($row = sqlFetchArray($res)) {
   // Each <tr> will have an ID identifying the patient.
+//  $arow = array('DT_RowId' => 'pid_' . $row['pid']);
+//    if($row['visit_status'] == 0) {
+//	    $arow = array('DT_RowId' => 'pid_' . $row['pid'],'DT_RowClass' => 'PT_INACTIVE');
+ // }
+ // else {
   $arow = array('DT_RowId' => 'pid_' . $row['pid']);
+ // }
   foreach ($aColumns as $colname) {
+
     if ($colname == 'name') {
       $name = $row['fname'];
       if ($name && $row['lname']) $name .= ' ';

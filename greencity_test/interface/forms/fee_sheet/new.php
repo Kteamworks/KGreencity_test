@@ -777,7 +777,15 @@ $billresult = getBillingByEncounter($pid, $encounter, "*");
 <style>
 .billcell { font-family: sans-serif; font-size: 10pt }
 </style>
+   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script language="JavaScript">
+$(document).ready(function(){
+$("tr td:nth-child(8)").css("display","none");
+$("tr td:nth-child(7)").css("display","none");
+$("tr td:nth-child(3)").css("display","none");
+$("tr td:nth-child(6)").css("display","none");
+$("tr td:nth-child(9)").css("display","none");
+});
 
 var diags = new Array();
 
@@ -1532,7 +1540,7 @@ if (true) {
 <?php if (!$isBilled) { ?>
 
 <input type='submit' name='bn_gen' value='<?php echo xla('Group Bill');?>'/>
-<input type='submit' name='bn_save' value='<?php echo xla('Save');?>' />
+<input type='submit' name='bn_save' onclick="setEnc()" value='<?php echo xla('Save');?>' />
 &nbsp;
 <?php if (!$hasCharges) { ?>
 <input type='submit' name='bn_save_close' value='<?php echo xla('Mark as Billed');?>' />
@@ -1565,6 +1573,22 @@ if ($alertmsg) {
   echo "alert('" . addslashes($alertmsg) . "');\n";
 }
 ?>
+function setEnc() {
+	$.ajax({
+				type: "POST",
+				url: "post_inactive.php",
+				success: function(response){
+					alert(response);
+			
+				},
+				error:function(){
+					console.log(error);
+					alert('ajax error');
+				}	
+			});
+	
+}
+
 </script>
 </body>
 </html>

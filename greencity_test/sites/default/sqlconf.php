@@ -4,8 +4,8 @@
 
 $host	= 'localhost';
 $port	= '3306';
-$login	= 'greencity';
-$pass	= 'greencity123';
+$login	= 'root';
+$pass	= '';
 $dbase	= 'greencity';
 
 //Added ability to disable

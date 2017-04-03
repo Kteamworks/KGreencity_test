@@ -327,7 +327,22 @@ function openNewTopWindow(pid) {
 <form name='fnew' method='post' target='_blank' action='../main_screen.php?auth=login&site=<?php echo attr($_SESSION['site_id']); ?>'>
 <input type='hidden' name='patientID'      value='0' />
 </form>
+<script type="text/javascript">
+ $(document).ready(function() {
+function explode(){
+$("#pt_table tbody tr").each(function(i){
+	var con = i+1;
+    $(this).prepend("<td style='text-align: center'>" + con + "</td>")
+});
+$("#pt_table thead tr:nth-child(2)").each(function(i){
+        $(this).prepend("<th>sr No</th>")
+});
+}
+setTimeout(explode, 2000);
 
+    });
+</script>
+</script>
 </body>
 </html>
 

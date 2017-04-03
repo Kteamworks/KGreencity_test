@@ -1,4 +1,5 @@
 <?php
+
 // Copyright (C) 2006-2010 Rod Roark <rod@sunsetsystems.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -370,10 +371,17 @@ function thisLineItem($patient_id, $encounter_id, $rowcat, $description, $transd
       //
       $res = sqlStatement($query);
       while ($row = sqlFetchArray($res)) {
+		  if($row['code_type']=='Doctor Charges')
+		  {
+			  $row['code_type']='Doctor Consultation';
+		  }
+		  
+		  
         thisLineItem($row['pid'], $row['encounter'],
           $row['code_type'], $row['code'] . ' ' . $row['code_text'],
           substr($row['date'], 0, 10), $row['units'], $row['fee'], $row['invoice_refno']);
       }
+	  
       //
       /* $query = "SELECT s.sale_date, s.fee, s.quantity, s.pid, s.encounter, " .
         "d.name, fe.date, fe.facility_id, fe.invoice_refno " .
