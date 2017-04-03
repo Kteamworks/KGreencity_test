@@ -264,7 +264,7 @@ $fres = sqlStatement("SELECT * FROM layout_options " .
         </ul>
 
         <div class="tabContainer">
-            <?php display_layout_tabs_obsdata_editable('HIS', $result, $result2); ?>
+            <?php display_layout_tabs_data_editable('HIS', $result, $result2); ?>
         </div>
     </div>
 </form>

@@ -116,6 +116,7 @@ if ($_POST['form_submit'] && !empty($_POST['form_line'])) {
         "result_text = '" . oresData("form_result_text", $lino) . "', " .
         "abnormal = '" . oresData("form_result_abnormal", $lino) . "', " .
         "result = '" . oresData("form_result_result", $lino) . "', " .
+		"seq = '" . oresData("form_seq_num", $lino) . "', " .
         "`range` = '" . oresData("form_result_range", $lino) . "', " .
         "units = '" . oresData("form_result_units", $lino) . "', " .
         "facility = '" . oresData("form_facility", $lino) . "', " .
@@ -532,7 +533,7 @@ while ($row = sqlFetchArray($res)) {
     $restyp_name      = empty($rrow['name'            ]) ? '' : $rrow['name'];
     $restyp_units     = empty($rrow['pt2_units'       ]) ? '' : $rrow['pt2_units'];
     $restyp_range     = empty($rrow['pt2_range'       ]) ? '' : $rrow['pt2_range'];
-
+    $res_seq          = empty($rrow['seq'       ]) ? '' : $rrow['seq'];
     $result_id        = empty($rrow['procedure_result_id']) ? 0 : ($rrow['procedure_result_id'] + 0);
     $result_code      = empty($rrow['result_code'     ]) ? $restyp_code : $rrow['result_code'];
     $result_text      = empty($rrow['result_text'     ]) ? $restyp_name : $rrow['result_text'];
@@ -648,6 +649,10 @@ while ($row = sqlFetchArray($res)) {
     echo "  <td>" .
       "<input type='text' size='16' name='form_result_text[$lino]'" .
       " class='celltext' value='" . attr($result_text) . "' />";
+	  echo "<input type='hidden' size='8' name='form_seq_num[$lino]'" .
+        " class='celltext' value='" . attr($res_seq) . "' " .
+        " title='" . xl('Sequence') . "'" .
+        " />";
       "</td>\n";
 
     echo "  <td>";

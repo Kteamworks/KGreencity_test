@@ -360,7 +360,7 @@ $rateplan=$patdata['rateplan'];
             echo "<td class='bold' width='20%'>".xlt('Head')."</td>";
 			echo "<td class='bold' width='30%'>".xlt('Description')."</td>";
 			echo "<td class='bold' width='10%' align='right'>".xlt('Rate')."</td>";
-			echo "<td class='bold' width='10%' align='right'>".xlt('No. of Days')."</td>";
+			echo "<td class='bold' width='10%' align='right'>".xlt(' ')."</td>";
             echo "<td class='bold' width='10%' align='right'>".xlt('Fee')."</td></tr><tr style='border-bottom: 1px solid #000;'><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
 			echo "</b>";
 			
@@ -419,13 +419,13 @@ $rateplan=$patdata['rateplan'];
                     echo "<td class='text'>". text($b['code_type'])."</td>\n";
 					echo "<td class='text'>".text($b['code_text'].' '.$b['notecodes']) . "</td>";
 					echo "<td class='text' align='right'>" .text(oeFormatMoney($rate)) . "</td>";
-					if($b['code_type']!="Doctor Charges")
+					/*if($b['code_type']!="Doctor Charges")
 					{
 			        echo "<td class='text' align='right'>" .text($b['units']) . "</td>";
-					}else
-					{
+					}else*/
+					
 						echo "<td class='text' align='right'>" .' '. "</td>";
-					}
+					
                     echo "<td class='text' align='right'>";
                     echo oeFormatMoney($b['fee']);
                     echo "</td>";
@@ -471,7 +471,7 @@ $rateplan=$patdata['rateplan'];
             echo "<td class='bold' width='10%' align='right'>".xlt('Amount')."</td></b></tr>\n";
              
 			  $inres = sqlStatement("SELECT user,dtime,amount1,amount2,receipt_id,method FROM payments WHERE " .
-          "pid = ? AND encounter = ?  AND activity=1  " .
+          "pid = ? AND encounter = ?  AND activity=1 AND stage!='pharm' " .
       "ORDER BY dtime", array($form_pid,$encounter) );
     while ($inrow = sqlFetchArray($inres)) {
       $payer = empty($inrow['payer_type']) ? 'Pt' : ('Ins' . $inrow['payer_type']);

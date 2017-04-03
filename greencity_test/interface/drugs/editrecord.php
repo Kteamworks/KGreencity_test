@@ -74,13 +74,15 @@ header("location:treatment.php");
     <th>Complaints</th>
     <td><input type="text" name="complaints" value="<?php echo $info['complaint']; ?>"/></td>
   </tr>
+  <!--
   <tr>
     <th>Hb % Urine RE</th>
     <td><input type="text" name="hb" value="<?php echo $info['hb']; ?>" /></td>
   </tr>
+  -->
   <tr>
     <th>Pallor</th>
-    <td><input type='text' name="pallor" rows="7" cols="10"><?php echo $info['pallor']; ?></td>
+    <td><input type='text' name="pallor" value="<?php echo $info['pallor']; ?>"></td>
   </tr>
   
   <tr>
@@ -93,8 +95,9 @@ header("location:treatment.php");
   </tr>  
   <tr>
     <th>Oedema</th>
-    <td><input type="text" name="oedema" value="<?php echo $info['oedema']; ?>" /></td>
+    <td><input type="text" name="oedema" value="<?php echo $info['OED']; ?>" /></td>
   </tr>
+  <!--
   <tr>
     <th>PA</th>
     <td><input type="text" name="pa" value="<?php echo $info['pa'];?>" /></td>
@@ -103,6 +106,7 @@ header("location:treatment.php");
     <th>PV</th>
     <td><input type="text" name="pv" value="<?php echo $info['pa']; ?>" /></td>
   </tr>
+  -->
   <tr>
     <th>Examination Findings</th>
    <td><textarea name="exam" rows="7" cols="20"><?php echo $info['exam']; ?></textarea></td>

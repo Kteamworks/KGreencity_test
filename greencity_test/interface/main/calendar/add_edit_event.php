@@ -51,7 +51,7 @@ require_once($GLOBALS['srcdir'].'/acl.inc');
  $eid           = $_GET['eid'];         // only for existing events
  $date          = $_GET['date'];        // this and below only for new events
  $userid        = $_GET['userid'];
- $default_catid = $_GET['catid'] ? $_GET['catid'] : '5';
+ $default_catid = $_GET['catid'] ? $_GET['catid'] : '22';
  //
  if ($date)
   $date = substr($date, 0, 4) . '-' . substr($date, 4, 2) . '-' . substr($date, 6);
@@ -81,42 +81,6 @@ require_once($GLOBALS['srcdir'].'/acl.inc');
 
  <?php
 
- 
- function SendSMS()
-{
-	                     $user = 'kavaii';
-						 $password = '12345';
-						 $sender_id = 'KAVAII';//helloz welcom FAPcop abhiii'hiiiii
-						 $sender = '7976345602';//9673776599 9320491970
-						 $msg = 'City Hospital- Appointment Confirmed with Dr. Anikethan at ';
-						 //$msg.=$starttime;
-						 $msg.=' hrs on ';
-						 //$msg.=$event_date;
-						 $priority = 'sdnd';
-						 $sms_type = 'normal';
-						 //$data = array('user'=>$user, 'pass'=>$password, 'sender'=>$sender_id, 'phone'=>$sender, 'text'=>$msg,  'stype'=>$sms_type);//'priority'=>$priority,
-						 $data='user='.$user.'&pass='.$password.'&sender='.$sender_id.'&phone='.$sender.'&text='.$msg.'&stype='.$sms_type.'&priority=sdnd'; 
-						 
-						 //http://bhashsms.com/api/sendmsg.php?user='kavaii'&pass='12345'&sender='KAVAII'&phone='9782364064'&text='Hii'&stype='normal'&priority='sdnd'
-						 
-						 //http://bhashsms.com/api/sendmsg.php?user=kavaii&pass=12345&sender=kavaii%20&phone=9731960662%20&text=hii%20&priority=sdnd&stype=normal
-						 $ch = curl_init('http://bhashsms.com/api/sendmsg.php?'.$data);
-						 echo var_dump($data);
-						 curl_setopt($ch, CURLOPT_POST, true);
-						 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-						 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-						 echo var_dump($ch);
-						 try {
-						  $response = curl_exec($ch);
-						  echo var_dump($ch);
-						  curl_close($ch);
-						  echo var_dump($response);
-						  echo 'Message has been sent.';
-						 }catch(Exception $e){
-						  echo 'Message: ' .$e->getMessage();
-						 }
-}
-
 function InsertEventFull()
  {
 	global $new_multiple_value,$provider,$event_date,$duration,$recurrspec,$starttime,$endtime,$locationspec;
@@ -142,7 +106,6 @@ function InsertEventFull()
                 $args['endtime'] = $endtime;
                 $args['locationspec'] = $locationspec;
                 InsertEvent($args);
-				SendSMS();
             }
 
         // ====================================
@@ -159,7 +122,6 @@ function InsertEventFull()
             $args['endtime'] = $endtime;
             $args['locationspec'] = $locationspec;
             InsertEvent($args);
-			SendSMS();
         }
  }
 function DOBandEncounter()
@@ -433,7 +395,6 @@ if ($_POST['form_action'] == "save") {
                     $args['endtime'] = $endtime;
                     $args['locationspec'] = $locationspec;
                     InsertEvent($args);
-					SendSMS();
                 }
             }
 
@@ -468,7 +429,6 @@ if ($_POST['form_action'] == "save") {
                     $args['endtime'] = $endtime;
                     $args['locationspec'] = $locationspec;
                     InsertEvent($args);
-					SendSMS();
                 }
             }
 
@@ -510,7 +470,6 @@ if ($_POST['form_action'] == "save") {
                         $args['endtime'] = $endtime;
                         $args['locationspec'] = $locationspec;
                         InsertEvent($args);
-						SendSMS();
                     } 
                 } 
 
@@ -576,7 +535,6 @@ if ($_POST['form_action'] == "save") {
                 $args['endtime'] = $endtime;
                 $args['locationspec'] = $locationspec;
                 InsertEvent($args);
-				SendSMS();
             }
             else if ($_POST['recurr_affect'] == 'future') {
                 // mod original event to stop recurring on this date-1
@@ -595,7 +553,6 @@ if ($_POST['form_action'] == "save") {
                 $args['endtime'] = $endtime;
                 $args['locationspec'] = $locationspec;
                 InsertEvent($args);
-				SendSMS();
             }
             else {
 

@@ -652,14 +652,14 @@ if (!$alertmsg && ($_POST['bn_save'] || $_POST['bn_save_close'])) {
       $provid, $modifier, $units, $fee, $ndc_info, $justify, 0, $notecodes,$modifier);
 	  //}
 	  
-	   $re=sqlQuery("select * from drugs where name=?",array($code));
+	  $re=sqlQuery("select * from drugs where name=?",array($code));
 	  $drug_id=$re['drug_id'];
-	  $prescription_id=111;
+	  $prescription_id=$encounter;
 	  $inventory_id=111;
 	  // update stock in both drug_sales n drugs table
 	  $user=$_SESSION['authUser'];
 	  $sale_id = sqlInsert("INSERT INTO drug_sales ( " .
-      "drug_id, inventory_id, prescription_id, pid, user, sale_date, quantity, fee, encounter " .
+      "drug_id, inventory_id, prescription_id, pid, user, sale_date, quantity, fee,encounter " .
       ") VALUES ( " .
       "'$drug_id', '$inventory_id', '$prescription_id', '$pid', '$user', Now(),
       '$units', '$fee','$encounter' "  .
@@ -667,7 +667,7 @@ if (!$alertmsg && ($_POST['bn_save'] || $_POST['bn_save_close'])) {
       sqlQuery("Update drugs set totalStock= totalStock - ? where drug_id=?",array($units,$drug_id));   
 	  sqlQuery("Update drug_templates set quantity= quantity - ? where drug_id=?",array($units,$drug_id));   
 	  sqlQuery("Update drug_inventory set on_hand= on_hand - ? where drug_id=?",array($units,$drug_id));  
-	  sqlQuery("Update billing_main_copy set total_charges=total_charges + ? where encounter=?",array($fee,$encounter));  
+	  sqlQuery("Update billing_main_copy set total_charges=total_charges + ? where encounter=?",array($fee,$encounter));   
 	
     }
 	
@@ -754,7 +754,7 @@ if (!$alertmsg && ($_POST['bn_save'] || $_POST['bn_save_close'])) {
         "pid = ? AND encounter = ? AND billed = 0", array($pid,$encounter));
       sqlStatement("UPDATE billing SET billed = 1, bill_date = NOW() WHERE " .
         "pid = ? AND encounter = ? AND billed = 0 AND " .
-        "activity = 1", array($pid,$encounter));
+        "activity = 1 AND code_type='Pharmacy Charge' ", array($pid,$encounter));
     }
     else {
       // Would be good to display an error message here... they clicked
@@ -1452,7 +1452,7 @@ if ($_POST['prod']) {
     // $fee = 0 + trim($iter['fee']);
     $units = max(1, intval(trim($iter['units'])));
     $fee   = sprintf('%01.2f',(0 + trim($iter['price'])) * $units);
-    echoProdLine(++$prod_lino, $iter['drug_id'], FALSE, $units, $fee);
+    //echoProdLine(++$prod_lino, $iter['drug_id'], FALSE, $units, $fee);
   }
 }
 
@@ -1485,7 +1485,7 @@ if ($_POST['newcodes']) {
         "prices.pr_level = patient_data.pricelevel " .
         "LIMIT 1", array($pid,$newcode,$newsel) );
       $fee = empty($prrow) ? 0 : $prrow['pr_price'];
-      echoProdLine(++$prod_lino, $newcode, FALSE, $units, $fee);
+      //echoProdLine(++$prod_lino, $newcode, FALSE, $units, $fee);
     }
 	
 	

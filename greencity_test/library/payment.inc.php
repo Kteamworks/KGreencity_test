@@ -27,12 +27,14 @@
 
 // Post a payment to the payments table.
 //
-function frontPayment($patient_id, $encounter, $method, $source, $amount1, $amount2, $timestamp,$towards, $auth="") {
+function frontPayment($patient_id, $encounter, $method, $source, $amount1, $amount2, $timestamp,$towards,$stage, $auth="") {
 
   if (empty($auth)) {
     $auth=$_SESSION['authUser'];
   }
-
+ if (empty($stage)) {
+    $stage='front_office';
+  }
   $tmprow = sqlQuery("SELECT date FROM form_encounter WHERE " .
     "encounter=? and pid=?",
                 array($encounter,$patient_id));
@@ -57,8 +59,8 @@ function frontPayment($patient_id, $encounter, $method, $source, $amount1, $amou
    }
    
   $payid = sqlInsert("INSERT INTO payments ( " .
-    "pid, encounter, dtime, user, method, source, amount1, amount2,towards" .
-    ") VALUES ( ?, ?, ?, ?, ?, ?, ?, ?,?)", array($patient_id,$encounter,$timestamp,$auth,$method,$source,$amount1,$amount2,$towards) );
+    "pid, encounter, dtime, user, method, source, amount1, amount2,towards,stage" .
+    ") VALUES ( ?, ?, ?, ?, ?, ?, ?, ?,?,?)", array($patient_id,$encounter,$timestamp,$auth,$method,$source,$amount1,$amount2,$towards,$stage) );
   return $payid;
 }
 

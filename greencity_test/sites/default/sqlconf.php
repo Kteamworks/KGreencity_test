@@ -4,9 +4,9 @@
 
 $host	= 'localhost';
 $port	= '3306';
-$login	= 'root';
-$pass	= 'admin123';
-$dbase	= 'greencity_test';
+$login	= 'greencity';
+$pass	= 'greencity123';
+$dbase	= 'greencity';
 
 //Added ability to disable
 //utf8 encoding - bm 05-2009

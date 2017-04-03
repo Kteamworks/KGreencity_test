@@ -57,7 +57,7 @@ $ires = sqlStatement("SELECT id, type, title, begdate FROM lists WHERE " .
 <link rel="stylesheet" href="<?php echo $css_header;?>" type="text/css">
 <link rel="stylesheet" href="<?php echo $GLOBALS['webroot'] ?>/library/js/jAlert-master/src/jAlert-v3.css" />
 <link rel="stylesheet" href="<?php echo $GLOBALS['webroot'] ?>/library/js/jquery.treeview-1.4.1/jquery.treeview.css" />
-<!-- <script src="<?php echo $GLOBALS['webroot'] ?>/library/js/jquery-1.7.2.min.js"></script> -->
+<script src="<?php echo $GLOBALS['webroot'] ?>/library/js/jquery-1.7.2.min.js"></script>
 <script src="<?php echo $GLOBALS['webroot'] ?>/library/js/jAlert-master/src/jAlert-v3.js"></script>
 <script src="<?php echo $GLOBALS['webroot'] ?>/library/js/jAlert-master/src/jAlert-functions.js"> //optional!!</script>
 <link rel="stylesheet" type="text/css" href="<?php echo $GLOBALS['webroot'] ?>/library/js/fancybox-1.3.4/jquery.fancybox-1.3.4.css" media="screen" />
@@ -224,17 +224,9 @@ function getRatePlan(plan)
      </td>
     </tr>
 	
-
-	    <tr>
-     <td class='bold' nowrap><?php echo xlt('Clinical Features:'); ?></td>
-     <td class='text'>
-      <input type="text" placeholder="temperature in °F(Ex: 98)" name="temp">
-	  <input type="text" placeholder="Weight in Kgs (Ex: 65)" name="weight">
-	  <input type="text" placeholder="Height in ft & inch (Ex: 6.5)" name="height">
-	  
-     </td>
-    </tr>
-	<tr style="visibility:hidden">
+	
+	
+	<tr>
      <td class='bold' nowrap><?php echo xlt('Package:'); ?></td>
 	 <td class='text'>
   
@@ -257,7 +249,7 @@ function getRatePlan(plan)
 	
 	
 	
-	<tr style="visibility:hidden;position:absolute;opacity:0">
+	<tr>
      <td class='bold' nowrap><?php echo xlt('Rate Plan:'); ?></td>
 	 <td class='text'>
   
@@ -342,8 +334,33 @@ function getRatePlan(plan)
 ?>
      </td>
     </tr>
+	
+		<tr>
+     <td class='bold' nowrap><?php echo xlt('Type:'); ?></td>
+     <!-- <td class='text'>
+  
+<?php
+  $ures = sqlStatement("SELECT * FROM list_options WHERE " .
+  "list_id='type' ORDER BY seq");
+    echo "<select name='type' style='width:100%' />  <option value='0'></option>";
+    while ($urow = sqlFetchArray($ures)) {
+      echo "    <option value='" . attr($urow['option_id']) . "'";
+     if ($urow['option_id'] == $defaultProvider);
+      echo ">" . text($urow['title']);
+    
+      echo "</option>\n";
+    }
+    echo "</select>";
+?>
+     </td> -->
+	   <td class='text'>
+<?php
+  echo generate_select_list('type', 'type', $viewmode ? $result['type'] : '', '');
+?>
+     </td>
+    </tr>
 
-    <tr  style="visibility:hidden;position:absolute;opacity:0">
+    <tr>
      <td class='bold' nowrap><?php echo xlt('Facility:'); ?></td>
      <td class='text'>
       <select name='facility_id' onChange="bill_loc()">
@@ -371,7 +388,7 @@ if ($fres) {
       </select>
      </td>
     </tr>
-	<tr  style="visibility:hidden;position:absolute;opacity:0">
+	<tr>
 		<td class='bold' nowrap><?php echo xlt('Billing Facility'); ?>:</td>
 		<td class='text'>
 			<div id="ajaxdiv">
@@ -381,7 +398,7 @@ if ($fres) {
 			</div>
 		</td>
      </tr>
-    <tr  style="visibility:hidden;position:absolute;opacity:0">
+    <tr>
 <?php
  $sensitivities = acl_get_sensitivities();
  if ($sensitivities && count($sensitivities)) {
@@ -414,7 +431,7 @@ if ($fres) {
 ?>
     </tr>
 
-    <tr<?php if (!$GLOBALS['gbl_visit_referral_source']) echo " style='visibility:hidden;'"; ?>  style="visibility:hidden;position:absolute;opacity:0">
+    <tr<?php if (!$GLOBALS['gbl_visit_referral_source']) echo " style='visibility:hidden;'"; ?>>
      <td class='bold' nowrap><?php echo xlt('Referral Source'); ?>:</td>
      <td class='text'>
 <?php
@@ -423,11 +440,11 @@ if ($fres) {
      </td>
     </tr>
 
-    <tr  visibility="hidden">
+    <tr>
      <td class='bold' nowrap><?php echo xlt('Date of Service:'); ?></td>
      <td class='text' nowrap>
       <input type='text' size='10' name='form_date' id='form_date' <?php echo $disabled ?>
-       value='<?php echo $viewmode ? substr($result['date'], 0, 10) : date('Y-m-d'); ?>'
+       value='<?php echo $viewmode ? substr($result['date'], 0, 10) : date('Y-m-d H:i:s'); ?>'
        title='<?php echo xla('yyyy-mm-dd Date of service'); ?>'
        onkeyup='datekeyup(this,mypcc)' onblur='dateblur(this,mypcc)' />
         <img src='../../pic/show_calendar.gif' align='absbottom' width='24' height='22'
@@ -436,7 +453,7 @@ if ($fres) {
      </td>
     </tr>
 
-    <tr<?php if ($GLOBALS['ippf_specific'] || $GLOBALS['athletic_team']) echo " style='visibility:hidden;'"; ?>   style="visibility:hidden">
+    <tr<?php if ($GLOBALS['ippf_specific'] || $GLOBALS['athletic_team']) echo " style='visibility:hidden;'"; ?>>
      <td class='bold' nowrap><?php echo xlt('Onset/hosp. date:'); ?></td>
      <td class='text' nowrap><!-- default is blank so that while generating claim the date is blank. -->
       <input type='text' size='10' name='form_onset_date' id='form_onset_date'
@@ -449,7 +466,7 @@ if ($fres) {
      </td>
     </tr>
 
-    <tr style="visibility:hidden;position:absolute;opacity:0">
+    <tr>
      <td class='text' colspan='2' style='padding-top:1em'>
 <?php if ($GLOBALS['athletic_team']) { ?>
       <p><i>Click [Add Issue] to add a new issue if:<br />
@@ -460,18 +477,11 @@ if ($fres) {
      </td>
     </tr>
 
-    <tr>
-	 <td class='bold' nowrap><?php echo xlt('Review after:'); ?></td>
-     <td class='text' >
-<input type="text" name="review_after" placeholder="Enter in multiples of Days"> 
-     </td>
-    </tr>
-
    </table>
 
   </td>
 
-  <td class='bold' width='33%' style="display:none" nowrap >
+  <td class='bold' width='33%' nowrap>
     <div style='float:left'>
    <?php echo xlt('Issues (Injuries/Medical/Allergy)'); ?>
     </div>
@@ -492,7 +502,7 @@ if ($fres) {
    <textarea name='reason' cols='40' rows='12' wrap='virtual' style='width:96%'
     ><?php echo $viewmode ? text($result['reason']) : text($GLOBALS['default_chief_complaint']); ?></textarea>
   </td>
-  <td class='text' valign='top' style="display:none">
+  <td class='text' valign='top'>
    <select multiple name='issues[]' size='8' style='width:100%'
     title='<?php echo xla('Hold down [Ctrl] for multiple selections or to unselect'); ?>'>
 <?php
@@ -531,7 +541,7 @@ while ($irow = sqlFetchArray($ires)) {
 
 <script language="javascript">
 /* required for popup calendar */
-Calendar.setup({inputField:"form_date", ifFormat:"%Y-%m-%d", button:"img_form_date"});
+Calendar.setup({inputField:"form_date", ifFormat:"%Y-%m-%d %H:%M:%S", button:"img_form_date", showsTime:true});
 Calendar.setup({inputField:"form_onset_date", ifFormat:"%Y-%m-%d", button:"img_form_onset_date"});
 <?php
 if (!$viewmode) { ?>

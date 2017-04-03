@@ -245,12 +245,11 @@ document.location.href = "../../patient_file/summary/demographics.php?set_pid=" 
  $(document).ready(function() {
     $('table#pt_table.display.datatable tr').live("click", function() {
 		var name=$(this).text();
-		var formname='fee_sheet_ph';
+		var formname='';
 		top.restoreSession();
 		//var formname1=""
 		//alert(encounter);
-		document.location.href="../../patient_file/encounter/forms.php?set_pid="+ newpid+'&encounter='+enc+'&formname='+formname;
-		//document.location.href="../../forms/fee_sheet_ph/new.php?set_pid="+ newpid+'&encounter='+enc+'&formname='+formname;
+		document.location.href="../../patient_file/encounter/forms.php?set_pid="+ newpid+'&encounter='+enc;
 		/*if(name=="Transfer")
 		{
 		//alert(newpid);

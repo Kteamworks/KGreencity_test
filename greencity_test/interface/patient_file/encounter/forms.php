@@ -11,12 +11,10 @@ require_once("$srcdir/calendar.inc");
 require_once("$srcdir/acl.inc");
 require_once("$srcdir/formatting.inc.php");
 require_once("$srcdir/patient.inc");
-require_once("$srcdir/encounter.inc");
 require_once("$srcdir/amc.php");
 require_once $GLOBALS['srcdir'].'/ESign/Api.php';
 require_once("$srcdir/../controllers/C_Document.class.php");
 $encounter=$_GET["encounter"] ? $_GET["encounter"] : $GLOBALS['encounter'];
-setencounter($encounter);
  if ($GLOBALS['concurrent_layout'] && isset($_GET['set_pid'])) {
   include_once("$srcdir/pid.inc");
   setpid($_GET['set_pid']);

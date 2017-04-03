@@ -192,7 +192,52 @@ You are about to Transfer a Patient From '<?php echo attr($admit_to_ward);?>': '
 
 </body>
 
+<script language="javascript">
+// jQuery stuff to make the page a little easier to use
 
+$(document).ready(function(){
+    $("#confirmbtn").click(function() {
+	var x = document.forms["my_form"]["adm_new_ward"].value;
+	if(x == null || x == "")
+	{
+	return validateForm()
+	}
+	else
+	{ 
+	return ConfirmTransfer(); 
+	}
+	});
+    $("#cancel").click(function() { location.href='<?php echo "$rootdir/patient_file/encounter/$returnurl";?>'; });
+});
+
+function ConfirmTransfer() {
+		$.jAlert({'type': 'confirm','confirmQuestion':'Are you sure you wish to Transfer this Patient? ', 'onConfirm': function(){
+        top.restoreSession();
+        $("#my_form").submit();
+        return true;   
+  }, 'onDeny': function(){
+    return false;    
+  } });
+   /* if (confirm("This action cannot be undone. Are you sure you wish to Transfer this Patient?")) {
+        top.restoreSession();
+        $("#my_form").submit();
+        return true;
+    }
+    return false;*/
+}
+function validateForm() {
+    var x = document.forms["my_form"]["adm_new_ward"].value;
+	 var y = document.forms["my_form"]["adm_new_bed"].value;
+    if (x == null || x == "") {
+        alert("Please select the Ward");
+        return false;
+    }
+	 if (y == null || y == "") {
+        alert("Please select the Bed");
+        return false;
+    }
+}
+</script>
 
 </html>
 

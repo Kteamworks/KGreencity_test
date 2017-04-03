@@ -173,7 +173,10 @@ while ($row = sqlFetchArray($res)) {
 	
     else if ($colname == 'DOB' || $colname == 'regdate' || $colname == 'ad_reviewed' || $colname == 'userdate1') {
       $arow[] = oeFormatShortDate($row[$colname]);
-    }
+    }else if($colname=='admit_date')
+	{
+		 $arow[] =  date( "d-M-y g:i a", strtotime( $row['admit_date'] ) );
+	}
     else {
       $arow[] = $row[$colname];
     }

@@ -73,7 +73,7 @@ $result=sqlQuery($spell, array($pid,$encounter) );
 
 // main db-spell
 //----------------------------------------
-$main_spell  = "SELECT procedure_result.procedure_result_id, procedure_result.result, procedure_result.result_text,  procedure_result.result_code, procedure_result.units, procedure_result.abnormal, procedure_result.range, procedure_result.comments,";
+$main_spell  = "SELECT procedure_result.procedure_result_id, procedure_result.result, procedure_result.result_text,  procedure_result.result_code, procedure_result.units, procedure_result.abnormal, procedure_result.range,procedure_result.comments, ";
 $main_spell .= "procedure_report.date_collected, procedure_report.review_status, ";
 $main_spell .= "procedure_order.encounter_id ";
 $main_spell .= "FROM procedure_result ";
@@ -85,7 +85,7 @@ $main_spell .= "WHERE procedure_result.result_code = ? "; // '?'
 $main_spell .= "AND procedure_order.patient_id = ? AND procedure_order.encounter_id=?";
 $main_spell .= "AND procedure_result.result IS NOT NULL ";
 $main_spell .= "AND procedure_result.result != ''";
-$main_spell .= "ORDER BY procedure_result.result_code,procedure_report.date_collected DESC limit 1 ";
+$main_spell .= "ORDER BY procedure_result.seq,procedure_report.date_collected DESC limit 1 ";
 //----------------------------------------
 
 // some styles and javascripts
@@ -251,7 +251,8 @@ if(!$printable){
 	$spell .= "WHERE procedure_order.patient_id = ? AND procedure_order.encounter_id=? ";
 	$spell .= "AND procedure_result.result IS NOT NULL ";
 	$spell .= "AND procedure_result.result != ''";
-	$spell .= "ORDER BY procedure_report.procedure_report_id,procedure_result.result_code ASC ";
+	$spell .= "ORDER BY procedure_report.procedure_report_id,procedure_result.seq,procedure_result.result_code ASC ";
+	//$spell .= "ORDER BY procedure_result.result_code,procedure_report.procedure_report_id,procedure_result.seq ASC ";
 	$query  = sqlStatement($spell,array($pid,$encounter));
 	
 
@@ -436,7 +437,7 @@ $i = 0;
 					echo"<td> </td>";
 				}else
 				{
-				echo "<td class='list_item' align='center' nowrap>&nbsp;&nbsp;&nbsp;(" . text($myrow['range'])." ". generate_display_field(array('data_type'=>'1','list_id'=>'proc_unit'),$myrow['units']) .")&nbsp;&nbsp;</td>";
+				echo "<td class='list_item' style='white-space:pre-wrap ; word-wrap:break-word' align='center' nowrap>&nbsp;&nbsp;(" . text($myrow['range'])." ". generate_display_field(array('data_type'=>'1','list_id'=>'proc_unit'),$myrow['units']) .")&nbsp;&nbsp;</td>";
 				}
 				if($myrow['comments']==null)
 				{

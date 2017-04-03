@@ -656,7 +656,7 @@ body
 </head>
 <!--<p style="margin-top:110px"></p>-->
 <body class="body_top"  bgcolor='#ffffff'>
-<img src=" <?php echo $GLOBALS['webroot']?>/interface/pic/medii.jpg" />
+<img src=" <?php echo $GLOBALS['webroot']?>/interface/pic/medii_e.jpg" />
 <hr>
 <center>
 <p><h4><?php echo xlt('Receipt for Payment'); ?></h4>

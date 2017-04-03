@@ -158,6 +158,8 @@ if ($_POST['form_save']) {
   $encc2=$encc1['pc_catid'];
    $result = getAdmitData($form_pid, "*");
    $status=$result['status'];
+   $stage='pharm';
+
 	if($_REQUEST['radio_type_of_payment']=='pre_payment')
 	 {
 		  $payment_id = idSqlStatement("insert into ar_session set "    .
@@ -189,7 +191,7 @@ if ($_POST['form_save']) {
 							", account_code = 'PPP'",
 							array($form_pid,$encounter,' ',' ',' ',0,$_SESSION['authUserID'],$payment_id,$_REQUEST['form_prepayment'],0));
 	     sqlQuery("Update billing_main_copy set patient_paid=patient_paid + ?  where encounter=?",array($_REQUEST['form_prepayment'],$encounter));   					
-		 frontPayment($form_pid, $encounter, $form_method, $form_source, $_REQUEST['form_prepayment'], 0, $timestamp,$form_towards);//insertion to 'payments' table.
+		 frontPayment($form_pid, $encounter, $form_method, $form_source, $_REQUEST['form_prepayment'], 0, $timestamp,$form_towards,$stage);//insertion to 'payments' table.
 		 
 	 }
   
@@ -237,7 +239,7 @@ if ($_POST['form_save']) {
 				   " VALUES (?,?,?,?,?,0,now(),?,?,?,'PCP')",
 					 array($form_pid,$enc,$Codetype,$Code,$Modifier,$_SESSION['authId'],$session_id,$amount));
 				   
-				 frontPayment($form_pid, $enc, $form_method, $form_source, $amount, 0, $timestamp,$form_towards);//insertion to 'payments' table.
+				 frontPayment($form_pid, $enc, $form_method, $form_source, $amount, 0, $timestamp,$form_towards,$stage);//insertion to 'payments' table.
 			 }
 			if($_REQUEST['radio_type_of_payment']=='invoice_balance' || $_REQUEST['radio_type_of_payment']=='cash')
 			 {				//Payment by patient after insurance paid, cash patients similar to do not bill insurance in feesheet.
@@ -245,7 +247,7 @@ if ($_POST['form_save']) {
 				   {
 				    sqlStatement("update form_encounter set last_level_closed=? where encounter=? and pid=? ",
 							array(4,$enc,$form_pid));
-				    sqlStatement("update billing set billed=? where encounter=? and pid=?",
+				    sqlStatement("update billing set billed=? where code_type='Pharmacy Charge' and encounter=? and pid=?",
 							array(1,$enc,$form_pid));
 				   }
 				   
@@ -268,14 +270,14 @@ if ($_POST['form_save']) {
   
 	//--------------------------------------------------------------------------------------------------------------------
 
-        			frontPayment($form_pid, $enc, $form_method, $form_source, 0, $amount, $timestamp,$form_towards);//insertion to 'payments' table.
+        			frontPayment($form_pid, $enc, $form_method, $form_source, 0, $amount, $timestamp,$form_towards,$stage);//insertion to 'payments' table.
 					//sqlQuery("update billing_activity_final by_patient_amt = by_patient_amt");
 					sqlQuery("Update billing_main_copy set patient_paid=patient_paid + ?  where encounter=?",array($amount,$encounter));   					
 					 if($form_towards== 2)
 					{
 	  
 					
-					sqlQuery("Update billing_main_copy set bill_id=concat('BL000','',encounter), bill_date = now(),PFYN_Flag=1 where encounter=?",array($encounter));   
+					sqlQuery("Update billing_main_copy set bill_id=concat('BL000','',encounter), bill_date = now() where encounter=?",array($encounter));   
 
 					} 
 	//--------------------------------------------------------------------------------------------------------------------
@@ -379,7 +381,7 @@ if ($_POST['form_save']) {
 			   
 				    sqlStatement("update form_encounter set last_level_closed=? where encounter=? and pid=? ",
 							array(3,$enc,$form_pid));
-				    sqlStatement("update billing set billed=? where encounter=? and pid=?",
+				    sqlStatement("update billing set billed=? where code_type='Pharmacy Charge' and  encounter=? and pid=?",
 							array(1,$enc,$form_pid));
 				   $pay_total=$amount;
 				   
@@ -890,7 +892,7 @@ $age_days=$patdata['age_days'];
                     $bdate = strtotime($b['date']);
 					$ct=$b['code_type'];
 					
-					$counta=sqlStatement("SELECT max(date) d,sum(fee) as st ,code_type,notecodes,count(code_type) as c from billing where activity='1' and encounter='".$encounter."' and code_text not in ('INSURANCE DIFFERENCE AMOUNT','REGISTRATION CHARGES','INSURANCE CO PAYMENT') and code_type='".$ct."'");
+					$counta=sqlStatement("SELECT max(date) d,sum(fee) as st ,code_type,notecodes,count(code_type) as c from billing where code_type='Pharmacy Charge' and encounter='".$encounter."' and activity='1' and code_type='".$ct."'");
 					$cc=sqlFetchArray($counta);
 					
 					 if($item_code!=$b['code_type'] & $b['code_type']=='Pharmacy Charge'){
@@ -919,7 +921,7 @@ $age_days=$patdata['age_days'];
                     //echo "<td class='text'>". text($b['code_type'])."</td>\n";
 					echo "<td class='text'>".text($d['name'].' '.$b['notecodes']) . "</td>";
 					echo "<td class='text'>".text($d['batch']) . "</td>";
-					echo "<td class='text'>".text($d['expdate']) . "</td>";
+				    echo "<td class='text'>".text(date('d/M/y',strtotime($d['expdate']))). "</td>";
 					echo "<td class='text'>".text($d['mfr']) . "</td>";
 					echo "<td class='text' align='right'>" .text(oeFormatMoney($rate)) . "</td>";
 			        echo "<td class='text' align='right'>" .text($b['units']) . "</td>";
@@ -1727,7 +1729,7 @@ function make_insurance()
 
   // Do the same for unbilled product sales.
   //
-  $query = "SELECT fe.encounter, s.drug_id, s.fee, " .
+ /*  $query = "SELECT fe.encounter, s.drug_id, s.fee, " .
     "LEFT(fe.date, 10) AS encdate,fe.last_level_closed " .
     "FROM form_encounter AS fe left join drug_sales AS s " .
     "on s.pid = ? AND s.fee != 0 " .//AND s.billed = 0 
@@ -1736,9 +1738,9 @@ function make_insurance()
     "ORDER BY s.encounter";
 
   $dres = sqlStatement($query,array($pid,$pid));
-  //
+  // */
   while ($drow = sqlFetchArray($dres)) {
-    $key = 0 - $drow['encounter'];
+  /*   $key = 0 - $drow['encounter'];
     if (empty($encs[$key])) {
       $encs[$key] = array(
         'encounter' => $drow['encounter'],
@@ -1751,7 +1753,7 @@ function make_insurance()
     // Add taxes.
     $trow = sqlQuery("SELECT taxrates FROM drug_templates WHERE drug_id = ? " .
       "ORDER BY selector LIMIT 1", array($drow['drug_id']) );
-    $encs[$key]['charges'] += calcTaxes($trow, $drow['fee']);
+    $encs[$key]['charges'] += calcTaxes($trow, $drow['fee']); */
   }
 
   ksort($encs, SORT_NUMERIC);
@@ -1821,8 +1823,8 @@ $discount=0;
 	 {//Patient balance
 	  $brow = sqlQuery("SELECT SUM(fee) AS amount FROM billing WHERE code_type='Pharmacy Charge' and " .
 	  "pid = ? and encounter = ? AND activity = 1",array($pid,$enc));
-	  $srow = sqlQuery("SELECT SUM(fee) AS amount FROM drug_sales WHERE " .
-	  "pid = ? and encounter = ? ",array($pid,$enc));
+	  /* $srow = sqlQuery("SELECT SUM(fee) AS amount FROM drug_sales WHERE " .
+	  "pid = ? and encounter = ? ",array($pid,$enc)); */
 	  $drow = sqlQuery("SELECT SUM(pay_amount) AS payments, " .
 	  "SUM(adj_amount) AS adjustments FROM ar_activity WHERE " .
 	  "pid = ? and encounter = ? ",array($pid,$enc));

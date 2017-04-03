@@ -281,7 +281,7 @@ $row2=  sqlFetchArray($row1);
 $billing=sqlStatement("select * from billing  where encounter='".$encounter."'");
 $billid=sqlFetchArray($billing);
 
-$billingdate=sqlStatement("select max(date) as d from billing  where encounter='".$encounter."'");
+$billingdate=sqlStatement("select max(date) as d from billing  where encounter='".$encounter."' and activity=1");
 $billdate=sqlFetchArray($billingdate);
 
 $admit=sqlStatement("select * from t_form_admit  where encounter='".$encounter."'");
@@ -465,7 +465,7 @@ $rateplan=$patdata['rateplan'];
             echo "<td class='bold' width='10%' align='right'>".xlt('Amount')."</td></b></tr>\n";
              
 			  $inres = sqlStatement("SELECT user,dtime,amount1,amount2,receipt_id,method FROM payments WHERE " .
-          "pid = ? AND encounter = ?  AND activity=1  " .
+          "pid = ? AND encounter = ?  AND activity=1 AND stage!='pharm' " .
       "ORDER BY dtime", array($form_pid,$encounter) );
     while ($inrow = sqlFetchArray($inres)) {
       $payer = empty($inrow['payer_type']) ? 'Pt' : ('Ins' . $inrow['payer_type']);

@@ -362,7 +362,8 @@ $j++;
 ?>
    </table>
  </div>
- <!-- <div class="col-md-4 table2">
+ <!--
+ <div class="col-md-4 table2">
   <table  class="table table-bordered">
 <?php 
  $pid=$_SESSION['pid'];
@@ -377,13 +378,9 @@ $query2=sqlFetchArray($query1);
 <tr>
   <td>Rubella<input type="text" name='' value='' size='2'></td> 
   <td>Hb % igg<input type="text" name='' value='' size='2'></td> 
-  <?php if($query2['result_text']=="Blood Group"){
-	?>
-  <td>BLD group (Rh)<input type="text" name='' value='<?php echo $query2['result']; ?>' size='2'></td>
-  <?php }?>
-
-  <td>RBS<input type="text" name='' value='' size='2'></td>
- 
+  
+  <td>BLD group (Rh)<input type="text" name='' value='' size='2'></td>
+  <td>RBS<input type="text" name='' value='' size='2'></td> 
   <td>TSH<input type="text" name='' value='' size='2'></td> 
    <td>HIV<input type="text" name='' value='' size='2'></td>
    <td>Urea<input type="text" name='' value='' size='2'></td>
@@ -426,7 +423,8 @@ $query2=sqlFetchArray($query1);
 </tr>
  
 </table>
-</div> -->
+</div>
+-->
  </div>
 
 <p>

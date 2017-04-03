@@ -60,28 +60,9 @@ if ( !acl_check('patients','med','',array('write','addonly') ))
  font-size: 10pt;
 }
 </style>
-<meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <!-- Bootstrap 3.3.6 -->
 <style type="text/css">@import url(../../../library/dynarch_calendar.css);</style>
-<style>
 
-ul.tabNav li {
-	margin: 0px;
-	padding: 0px;
-}
-#HIS .label {
-    color: #000;
-}
-#HIS .nav>li>a {
-    padding: 10px 13px;
-}
-</style>
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script type="text/javascript" src="../../../library/dialog.js"></script>
 <script type="text/javascript" src="../../../library/textformat.js"></script>
 <script type="text/javascript" src="../../../library/dynarch_calendar.js"></script>
@@ -307,6 +288,8 @@ td{
 
 <?php
 $result = getHistoryData($pid);
+ $details=getPatientData($pid);
+ $name=$details['fname'].' ' .$details['lname'];
 if (!is_array($result)) {
   newHistoryData($pid);
   $result = getHistoryData($pid);
@@ -323,8 +306,8 @@ $fres = sqlStatement("SELECT * FROM layout_options " .
     <div>
         <span class="title"><?php echo htmlspecialchars(xl('Patient History'),ENT_NOQUOTES); ?></span>
     </div>
-    <div>
-  <?php echo htmlspecialchars(xl('for'),ENT_NOQUOTES);?><br><b><?php echo htmlspecialchars(xl('Name:'),ENT_NOQUOTES)?>&nbsp;&nbsp;<span class="title"><a href="../summary/demographics.php" onclick='top.restoreSession()'><?php echo htmlspecialchars(getPatientName($pid),ENT_NOQUOTES); ?></a></span>
+    <div style='float:left;margin-right:10px'>
+  <?php echo htmlspecialchars(xl('for'),ENT_NOQUOTES);?><br><b><?php echo htmlspecialchars(xl('Name:'),ENT_NOQUOTES)?>&nbsp;&nbsp;<span class="title"><a href="../summary/demographics.php" onclick='top.restoreSession()'><?php echo htmlspecialchars($name,ENT_NOQUOTES); ?></a></span>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <?php
   $details=getPatientData($pid);
@@ -335,7 +318,7 @@ $fres = sqlStatement("SELECT * FROM layout_options " .
   ?></b>
   &nbsp;&nbsp;
   <?php echo htmlspecialchars($occupation,ENT_NOQUOTES);?>
-
+  <br>
   <b><?php echo htmlspecialchars(xl('Age:') ,ENT_NOQUOTES);?></b>
   &nbsp;&nbsp;
   <?php echo htmlspecialchars($age,ENT_NOQUOTES);?>
@@ -344,7 +327,8 @@ $fres = sqlStatement("SELECT * FROM layout_options " .
   &nbsp;&nbsp;
   <?php echo htmlspecialchars($husband,ENT_NOQUOTES);?>
     </div>
-
+	<br>
+	<br><br><br>
     <div>
         <a href="javascript:submit_history();" class='css_button'>
             <span><?php echo htmlspecialchars(xl('Save'),ENT_NOQUOTES); ?></span>
@@ -357,8 +341,7 @@ $fres = sqlStatement("SELECT * FROM layout_options " .
     <br/>
 
     <!-- history tabs -->
-    <div id="HIS" style=' margin-top: 10px;' class="">
-	<div col="col-md-10" style="width:83.3333%">
+    <div id="HIS" style='float:none; margin-top: 10px; margin-right:20px'>
         <ul class="tabNav" >
            <?php display_layout_tabs('HIS', $result, $result2); ?>
         </ul>
@@ -367,27 +350,6 @@ $fres = sqlStatement("SELECT * FROM layout_options " .
             <?php display_layout_tabs_data_editable('HIS', $result, $result2); ?>
         </div>
     </div>
-	<div class="col-md-2">
-								  <table class='table table-responsive table-striped' style="display: list-item">
-								  <label style="background: #ccc;
-    display: block;
-    padding: 10px;
-    margin-bottom: -18px;">Procedure Results</label>
-									  <tr>
-				
-<?php $qry_lab="select result_text,patient_id,result  from procedure_result a,procedure_report b,procedure_order c where a.procedure_report_id=b.procedure_report_id and c.procedure_order_id = b.procedure_order_id and patient_id='".$_SESSION['pid']."' and result!=' '";	  
-    $qry_lab1=sqlStatement($qry_lab);
-	?>
-<td>
-	<?php while($qry_labdata = sqlFetchArray($qry_lab1) ) { ?> 
-				
-				<?php echo $qry_labdata['result_text']; ?>:&nbsp;&nbsp;&nbsp;<b><?php echo $qry_labdata['result']; ?></b><br>
-				
-<?php } ?>
-</td></tr>
-  </table>
-	</div>
-	</div>
 </form>
 
 <!-- include support for the list-add selectbox feature -->
@@ -404,7 +366,7 @@ $(document).ready(function () {
   var id = ids + 1;
      var tabId = 'iclick_' + id;
      $('.tabNav').append('<li><a href="#iclick_' + id + '" id="newt">Obstretic Examination</a></li>');
-     $('.tabContainer').append('<div class="tab" id="' + tabId + '"><iframe src="<?php echo $GLOBALS['webroot'] ?>/interface/drugs/treatment.php" frameborder="0" width="1100" height="500" scrolling="auto" id="myFrame"></iframe></div>');
+     $('.tabContainer').append('<div class="tab" id="' + tabId + '"><iframe src="<?php echo $GLOBALS['webroot'] ?>/interface/drugs/treatment.php" frameborder="0" width="2000" height="500" scrolling="auto" id="myFrame"></iframe></div>');
 
      // add this
 
@@ -414,6 +376,10 @@ $(document).ready(function () {
 	  $('.tabNav li:nth-child(' + id + ')').addClass('current').siblings().removeClass('current');
 	   $("#"+tabId).addClass('current').siblings().removeClass('current');
 	   });
+	   
+	   
+     
+	   
 });
 </script>
 

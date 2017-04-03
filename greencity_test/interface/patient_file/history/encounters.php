@@ -73,7 +73,7 @@ $issue = empty($_GET['issue']) ? 0 : 0 + $_GET['issue'];
 //
 $tmp = sqlQuery("select authorized from users " .
   "where id = ?", array($_SESSION['authUserID']) );
-$billing_view = ($tmp['authorized'] || $GLOBALS['athletic_team']) ? 0 : 1;
+$billing_view = ($tmp['authorized'] || $GLOBALS['athletic_team']) ? 1 : 0;
 if (isset($_GET['billing']))
   $billing_view = empty($_GET['billing']) ? 0 : 1;
 
@@ -265,12 +265,12 @@ function efmouseover(elem, ptid, encid, formname, formid) {
 <font class='title'>
 <?php
 if ($issue) {
-  echo htmlspecialchars(xl('Past Encounters for'), ENT_NOQUOTES) . ' ';
+  echo htmlspecialchars(xl('Past Visits for'), ENT_NOQUOTES) . ' ';
   $tmp = sqlQuery("SELECT title FROM lists WHERE id = ?", array($issue));
   echo htmlspecialchars($tmp['title'], ENT_NOQUOTES);
 }
 else {
-  echo htmlspecialchars(xl('Past Encounters and Documents'), ENT_NOQUOTES);
+  echo htmlspecialchars(xl('Past Visits and Documents'), ENT_NOQUOTES);
 }
 ?>
 </font>

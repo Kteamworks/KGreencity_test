@@ -445,6 +445,7 @@ function validate(f) {
   <td width='1%' valign='top' nowrap><b><?php xl('Ordering Provider','e'); ?>:</b></td>
   <td valign='top'>
 <?php
+$row['provider_id']=4;
 generate_form_field(array('data_type'=>10,'field_id'=>'provider_id'),
   $row['provider_id']);
 ?>
@@ -514,6 +515,7 @@ generate_form_field(array('data_type'=>1,'field_id'=>'order_priority',
   <td width='1%' valign='top' nowrap><b><?php xl('Status','e'); ?>:</b></td>
   <td valign='top'>
 <?php
+$row['order_status']="pending";
 generate_form_field(array('data_type'=>1,'field_id'=>'order_status',
   'list_id'=>'ord_status'), $row['order_status']);
 ?>

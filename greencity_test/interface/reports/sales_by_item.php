@@ -354,13 +354,13 @@ function thisLineItem($patient_id, $encounter_id, $rowcat, $description, $transd
 
     if ($INTEGRATED_AR) {
       $query = "SELECT b.date,b.fee, b.pid, b.encounter, b.code_type, b.code, b.units, " .
-        "b.code_text, fe.date, fe.facility_id, fe.invoice_refno, lo.title " .
+        "b.code_text, fe.date, fe.facility_id, fe.invoice_refno " .
         "FROM billing AS b " .
         "JOIN code_types AS ct ON ct.ct_key = b.code_type " .
         "JOIN form_encounter AS fe ON fe.pid = b.pid AND fe.encounter = b.encounter " .
-        "LEFT JOIN codes AS c ON c.code_type = ct.ct_id AND c.code = b.code AND c.modifier = b.modifier " .
-        "LEFT JOIN list_options AS lo ON lo.list_id = 'superbill' AND lo.option_id = c.superbill " .
-        "WHERE b.code not in ('INSURANCE DIFFERENCE AMOUNT','INSURANCE CO PAYMENT') AND b.activity = 1 AND b.fee != 0 AND " .
+        //"LEFT JOIN codes AS c ON c.code_type = ct.ct_id AND c.code = b.code AND c.modifier = b.modifier " .
+        //"LEFT JOIN list_options AS lo ON lo.list_id = 'superbill' AND lo.option_id = c.superbill " .
+        "WHERE b.code not in ('INSURANCE DIFFERENCE AMOUNT','INSURANCE CO PAYMENT') AND b.billed=1 and b.activity = 1 AND b.fee != 0 AND " .
         "b.date >= '$from_date 00:00:00' AND b.date <= '$to_date 23:59:59'";
       // If a facility was specified.
       if ($form_facility) {
@@ -375,25 +375,25 @@ function thisLineItem($patient_id, $encounter_id, $rowcat, $description, $transd
           substr($row['date'], 0, 10), $row['units'], $row['fee'], $row['invoice_refno']);
       }
       //
-      $query = "SELECT s.sale_date, s.fee, s.quantity, s.pid, s.encounter, " .
+      /* $query = "SELECT s.sale_date, s.fee, s.quantity, s.pid, s.encounter, " .
         "d.name, fe.date, fe.facility_id, fe.invoice_refno " .
         "FROM drug_sales AS s " .
         "JOIN drugs AS d ON d.drug_id = s.drug_id " .
         "JOIN form_encounter AS fe ON " .
         "fe.pid = s.pid AND fe.encounter = s.encounter AND " .
         "fe.date >= '$from_date 00:00:00' AND fe.date <= '$to_date 23:59:59' " .
-        "WHERE s.fee != 0";
+        "WHERE s.fee != 0"; */
       // If a facility was specified.
       if ($form_facility) {
         $query .= " AND fe.facility_id = '$form_facility'";
       }
-      $query .= " ORDER BY d.name, fe.date, fe.id";
+      //$query .= " ORDER BY d.name, fe.date, fe.id";
       //
-      $res = sqlStatement($query);
+    /*   $res = sqlStatement($query);
       while ($row = sqlFetchArray($res)) {
         thisLineItem($row['pid'], $row['encounter'], xl('Products'), $row['name'],
           substr($row['date'], 0, 10), $row['quantity'], $row['fee'], $row['invoice_refno']);
-      }
+      } */
     }
     else {
       $query = "SELECT ar.invnumber, ar.transdate, " .

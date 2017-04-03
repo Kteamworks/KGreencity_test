@@ -32,6 +32,7 @@ require_once("$srcdir/patient.inc");
 
 $date             = (isset($_POST['form_date']))            ? $_POST['form_date'] : '';
 $onset_date       = (isset($_POST['form_onset_date']))      ? $_POST['form_onset_date'] : '';
+$type             = (isset($_POST['type']))? $_POST['type'] : '';
 $sensitivity      = (isset($_POST['form_sensitivity']))     ? $_POST['form_sensitivity'] : '';
 $pc_catid         = (isset($_POST['pc_catid']))             ? $_POST['pc_catid'] : '';
 $facility_id      = (isset($_POST['facility_id']))          ? $_POST['facility_id'] : '';
@@ -42,11 +43,6 @@ $provider_id      = (isset($_POST['form_provider'])) ? $_POST['form_provider'] :
 $referral_source  = (isset($_POST['form_referral_source'])) ? $_POST['form_referral_source'] : '';
 $tpaid            = (isset($_POST['instpa'])) ? $_POST['instpa'] : '';
 $package          = (isset($_POST['package'])) ? $_POST['package'] : '';
-$temp          = (isset($_POST['temp'])) ? $_POST['temp'] : '';
-$weight          = (isset($_POST['weight'])) ? $_POST['weight'] : '';
-$height          = (isset($_POST['height'])) ? $_POST['height'] : '';
-$tod          = (isset($_POST['tod'])) ? $_POST['tod'] : '';
-$review_after          = (isset($_POST['review_after'])) ? $_POST['review_after'] : '';
 
 $facilityresult = sqlQuery("select name FROM facility WHERE id = ?", array($facility_id));
 $facility = $facilityresult['name'];
@@ -76,6 +72,7 @@ $nexturl = $normalurl;
 
 if ($mode == 'new')
 {
+ 
 	$encounter = generate_id();
     addForm($encounter, "New Patient Encounter",
     sqlInsert("INSERT INTO form_encounter SET " .
@@ -83,16 +80,12 @@ if ($mode == 'new')
       "onset_date = '" . add_escape_custom($onset_date) . "', " .
       "reason = '" . add_escape_custom($reason) . "', " .
       "facility = '" . add_escape_custom($facility) . "', " .
+	   "type = '" . add_escape_custom($type) . "', " .
       "pc_catid = '" . add_escape_custom($pc_catid) . "', " .
       "facility_id = '" . add_escape_custom($facility_id) . "', " .
       "billing_facility = '" . add_escape_custom($billing_facility) . "', " .
       "sensitivity = '" . add_escape_custom($sensitivity) . "', " .
       "referral_source = '" . add_escape_custom($referral_source) . "', " .
-	  "type_of_delivery = '" . add_escape_custom($tod) . "', " .
-	  "weight = '" . add_escape_custom($weight) . "', " .
-	  "height = '" . add_escape_custom($height) . "', " .
-	  "temp = '" . add_escape_custom($temp) . "', " .
-	  "review_after = '" . add_escape_custom($review_after) . "', " .
       "pid = '" . add_escape_custom($pid) . "', " .
       "encounter = '" . add_escape_custom($encounter) . "', " .
 	  "tpa_id = '" . add_escape_custom($tpaid) . "', " .
@@ -123,7 +116,7 @@ if ($mode == 'new')
 	$dayy=$days['day'];
 	
 	
-		if(!($pc_catid==5 || $pc_catid==12 || $pc_catid==16 || $pc_catid==17))
+		if(!($pc_catid==20 || $pc_catid==12 || $pc_catid==16 || $pc_catid==17||$pc_catid==22))
 	{
 	$patient=getPatientData($pid, "rateplan");
     $rate=$patient['rateplan'];
@@ -145,30 +138,19 @@ if ($mode == 'new')
 	$grpn="HosInsurance";
 	$onset_date1=date('Y-m-d H:i:s');
 
-	if($pc_catid==13)
+	if($pc_catid==23)
 		 {
-			$ct="CASUALTY CONSULTATION (DAY)"; 	 
+			$ct="Iron Injection"; 	 
 		    $cas5=sqlStatement("Select a.service_id,code,code_type,code_text,pr_price from codes a,prices b where a.id=b.pr_id and a.code='".$ct."' and a.code_type=6 and b.pr_level='HosInsurance'");
 			$cas6=sqlFetchArray($cas5);
 			$codetype="Services"; 
 			$servicegrpid=$cat6['code_type'];
 	        $serviceid=$cat6['service_id'];
-			$codetext="CASUALTY CONSULTATION (DAY)"; 
+			$codetext="Iron Injection"; 
 			$code=$codetext;
 			$fee=$cas6['pr_price'];
 		 }
-		 if($pc_catid==15)
-		 {
-			$ct1="CASUALTY CONSULTATION (NIGHT)";
-		    $cas7=sqlStatement("Select a.service_id,code,code_type,code_text,pr_price from codes a,prices b where a.id=b.pr_id and a.code='".$ct1."' and a.code_type=6 and b.pr_level='HosInsurance'");
-			$cas8=sqlFetchArray($cas7);
-			$codetype="Services"; 
-			$servicegrpid=$cat8['code_type'];
-	        $serviceid=$cat8['service_id'];
-			$codetext="CASUALTY CONSULTATION (NIGHT)"; 
-			$code=$codetext;
-			$fee=$cas8['pr_price'];
-		 }
+		
 	}
 	else
     {
@@ -188,30 +170,20 @@ if ($mode == 'new')
 	$grpn="Default";
 	$onset_date1=date('Y-m-d H:i:s');
 
-	if($pc_catid==13)
+	
+	if($pc_catid==23)
 		 {
-			$ct="CASUALTY CONSULTATION (DAY)"; 	 
-		    $cas1=sqlStatement("Select  a.service_id,code,code_type,code_text,pr_price from codes a,prices b where a.id=b.pr_id and a.code='".$ct."' and a.code_type=6 and b.pr_level='standard'");
-			$cas2=sqlFetchArray($cas1);
+			$ct="Iron Injection"; 	 
+		    $cas5=sqlStatement("Select a.service_id,code,code_type,code_text,pr_price from codes a,prices b where a.id=b.pr_id and a.code='".$ct."' and a.code_type=6 and b.pr_level='HosInsurance'");
+			$cas6=sqlFetchArray($cas5);
 			$codetype="Services"; 
-				$servicegrpid=$cas2['code_type'];
-	          $serviceid=$cas2['service_id'];
-			$codetext="CASUALTY CONSULTATION (DAY)"; 
+			$servicegrpid=$cat6['code_type'];
+	        $serviceid=$cat6['service_id'];
+			$codetext="Iron Injection"; 
 			$code=$codetext;
-			$fee=$cas2['pr_price'];
+			$fee=$cas6['pr_price'];
 		 }
-		 if($pc_catid==15)
-		 {
-			$ct1="CASUALTY CONSULTATION (NIGHT)";
-		    $cas3=sqlStatement("Select  a.service_id,code,code_type,code_text,pr_price from codes a,prices b where a.id=b.pr_id and a.code='".$ct1."' and a.code_type=6 and b.pr_level='standard'");
-			$cas4=sqlFetchArray($cas3);
-			$codetype="Services"; 
-			$servicegrpid=$cas4['code_type'];
-	        $serviceid=$cas4['service_id'];
-			$codetext="CASUALTY CONSULTATION (NIGHT)"; 
-			$code=$codetext;
-			$fee=$cas4['pr_price'];
-		 }
+		
 	}	
 	if($code!=null)
 	{
@@ -256,6 +228,7 @@ else if ($mode == 'update')
     "reason = '" . add_escape_custom($reason) . "', " .
     "facility = '" . add_escape_custom($facility) . "', " .
     "pc_catid = '" . add_escape_custom($pc_catid) . "', " .
+	"type = '" . add_escape_custom($type) . "', " .
     "facility_id = '" . add_escape_custom($facility_id) . "', " .
     "billing_facility = '" . add_escape_custom($billing_facility) . "', " .
     "sensitivity = '" . add_escape_custom($sensitivity) . "', " .

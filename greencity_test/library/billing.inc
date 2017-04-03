@@ -15,7 +15,7 @@ function getBillingByPid ($pid, $cols = "*")
 
 function getBillingByEncounter ($pid,$encounter, $cols = "code_type, code, code_text")
 {
-    $res = sqlStatement("select $cols from billing where encounter = ? and pid=? and activity=1 order by code_type, date ASC", array($encounter,$pid) );
+    $res = sqlStatement("select $cols from billing where encounter = ? and pid=? and activity=1 and code_type!='Pharmacy Charge' order by code_type, date ASC", array($encounter,$pid) );
 
     $all=array();
     for($iter=0; $row=sqlFetchArray($res); $iter++)
@@ -24,7 +24,6 @@ function getBillingByEncounter ($pid,$encounter, $cols = "code_type, code, code_
     }
     return $all;
 }
-
 function getBillingByEncounterPharm ($pid,$encounter, $cols = "code_type, code, code_text")
 {
 
@@ -37,9 +36,6 @@ function getBillingByEncounterPharm ($pid,$encounter, $cols = "code_type, code, 
     }
     return $all;
 }
-
-
-
 
 function addBilling($encounter_id,$ct, $service_id,$code_type, $code, $code_text, $pid,
   $authorized="0", $provider, $modifier="", $units="", $fee="0.00",

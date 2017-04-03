@@ -77,7 +77,7 @@ function thisLineItem($row, $xfer=false) {
     echo '"' . esc4Export($row['warehouse'])        . '",';
     echo '"' . esc4Export($dpname)                  . '",';
     echo '"' . (0 - $row['quantity'])               . '",';
-    echo '"' . bucks($row['fee'])                   . '",';
+    echo '"' . bucks(-$row['fee'])                   . '",';
     echo '"' . $row['billed']                       . '",';
     echo '"' . esc4Export($row['notes'])            . '"' . "\n";
   }
@@ -108,7 +108,7 @@ function thisLineItem($row, $xfer=false) {
    <?php echo htmlspecialchars(0 - $row['quantity']); ?>
   </td>
   <td class="detail" align="right">
-   <?php echo htmlspecialchars(bucks($row['fee'])); ?>
+   <?php echo htmlspecialchars (bucks(-($row['fee']))); ?>
   </td>
   <td class="detail" align="center">
    <?php echo empty($row['billed']) ? '&nbsp;' : '*'; ?>
@@ -393,7 +393,7 @@ if ($form_action) { // if submit or export
    <?php echo htmlspecialchars($grandqty, ENT_NOQUOTES); ?>
   </td>
   <td class="dehead" align="right">
-   <?php echo htmlspecialchars(bucks($grandtotal), ENT_NOQUOTES); ?>
+   <?php echo htmlspecialchars(bucks(-$grandtotal), ENT_NOQUOTES); ?>
   </td>
   <td class="dehead" colspan="2">
 

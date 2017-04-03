@@ -8,7 +8,6 @@
 
 $special_timeout = 3600;
 include_once("../../globals.php");
-
 if (substr($_GET["formname"], 0, 3) === 'LBF') {
   // Use the List Based Forms engine for all LBFxxxxx forms.
   include_once("$incdir/forms/LBF/new.php");

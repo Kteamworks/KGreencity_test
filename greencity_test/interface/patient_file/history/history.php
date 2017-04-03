@@ -302,7 +302,7 @@ WHERE pid = ?";
   </table>
     <?php } ?>
     <br>
-  <a href="http://103.230.38.89/testc/interface/forms/vitals/new.php" class="element iframe rx_modal pull-right" data-toggle="tooltip" data-placement="top" title="Add Vitals">
+ <!-- <a href="http://103.230.38.89/testc/interface/forms/vitals/new.php" class="element iframe rx_modal pull-right" data-toggle="tooltip" data-placement="top" title="Add Vitals">
 
  <span class="fa-stack fa-lg">
   <i class="fa fa-circle fa-stack-2x"></i>
@@ -317,7 +317,7 @@ WHERE pid = ?";
   <th>Vitals</th>
     <td>Date:<?php echo $vital['date'] ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Height:<?php echo $vital['height'] ?>in <br>Weight:<?php echo $vital['weight'] ?>lbs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BP:<?php echo $vital['bps'] ?>mmHg</td>
   </tr>
-  </table>
+  </table> -->
     <?php } ?>
 <script>
 $(".iframe").fancybox( {

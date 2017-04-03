@@ -112,10 +112,7 @@ $GLOBALS_METADATA = array(
       array(
         'main_info.php' => xl('Calendar Screen'),
         '../new/new.php' => xl('Patient Search/Add Screen'),
-		'../../interface/main/finder/p_dynamic_finder.php' => xl('Doctor Patients'),
-		'../../interface/main/finder/ph_dynamic_finder.php' => xl('Pharmacy Patients'),
-		'../../interface/main/finder/dynamic_finder.php' => xl('Lab Patients'),
-		'../../interface/main/finder/dynamic_finder.php' => xl('Patients'),
+        '../../interface/main/finder/dynamic_finder.php' => xl('Patients'),
       ),
       'main_info.php',                  // default = calendar
       xl('Type of screen layout')

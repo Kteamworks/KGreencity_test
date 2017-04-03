@@ -14,17 +14,7 @@ if ($_POST['confirm']) {
 	 	$admit_to_ward=$_POST['admit_to_ward'];
 	 sqlStatement("update list_options set is_default=0 where list_id='".$_POST['admit_to_ward']."'
 	and option_id='".$_POST['admit_to_bed']."'");
-	 if($admit_to_ward=='Private')
-  {
-	  $pr=sqlStatement("select option_id, concat('SP',substring(option_id,2,instr(option_id,',')-2)) Bed1,concat('SP-',substring(option_id,instr(option_id,',')+1)) Bed2 from list_options where option_id like '".$_POST['admit_to_bed']. "'");
-	  $pr1=sqlFetchArray($pr);
-	  $bed1=$pr1['Bed1'];
-	  $bed2=$pr1['Bed2'];
-	  sqlStatement("UPDATE list_options SET is_default=0 WHERE option_id= '".$bed1. "'");
-	  sqlStatement("UPDATE list_options SET is_default=0 WHERE option_id= '".$bed2. "'");
-	  
-	  
-  }
+	
      $status='discharge';
 	 $days="SELECT round(TIME_TO_SEC(TIMEDIFF('".$_POST['discharge_date']."','".$_POST['admit_date']."'))/86400,0) days";
 	$day=sqlStatement($days);

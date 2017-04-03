@@ -10,8 +10,6 @@
 // Sanitize escapes and stop fake register globals.
 //
 
-
-
 $page = $_SERVER['PHP_SELF'];
 $sec = "120";
 
@@ -51,9 +49,7 @@ while ($row = sqlFetchArray($res)) {
 ?>
 <html>
 <head>
-
 <meta http-equiv="refresh" content="<?php echo $sec?>;URL='<?php echo $page?>'">
-
 <?php html_header_show(); ?>
 
 <link rel="stylesheet" href="<?php echo $css_header; ?>" type="text/css">
@@ -117,7 +113,7 @@ $(document).ready(function() {
   // http://datatables.net/release-datatables/extras/ColReorder/server_side.html
   "aoColumns": [ <?php echo $coljson; ?> ],
   "aLengthMenu": [ 10, 25, 50, 100 ],
-  "iDisplayLength": <?php echo empty($GLOBALS['gbl_pt_list_page_size']) ? '25' : '25'; ?>,
+  "iDisplayLength": <?php echo empty($GLOBALS['gbl_pt_list_page_size']) ? '50' : '50'; ?>,
   // language strings are included so we can translate them$GLOBALS
   "oLanguage": {
    "sSearch"      : "<?php echo xla('Search all columns'); ?>:",

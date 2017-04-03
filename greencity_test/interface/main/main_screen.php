@@ -84,7 +84,7 @@ else if (isset($_GET['mode']) && $_GET['mode'] == "loadcalendar") {
 }
 else if ($GLOBALS['concurrent_layout']) {
   // new layout
-  if ($GLOBALS['default_top_pane']) {
+   if ($GLOBALS['default_top_pane']) {
 	  $newcrop_user_role=sqlQuery("select newcrop_user_role from users where username='".$_SESSION['authUser']."'");
  if($newcrop_user_role['newcrop_user_role']=='erxdoctor')
  {
@@ -140,8 +140,7 @@ if ($GLOBALS['concurrent_layout']) {
     // not tall nav area ?>
 <frameset rows='<?php echo attr($GLOBALS['titleBarHeight']) + 5 ?>,*' frameborder='1' border='1' framespacing='1' onunload='imclosing()'>
  <frame src='main_title.php' name='Title' scrolling='no' frameborder='1' noresize />
- <frameset cols='0,*' id='fsbody' frameborder='1' border='4' framespacing='4'>
- <!--<frameset cols='<?php echo attr($nav_area_width); ?>,*' id='fsbody' frameborder='1' border='4' framespacing='4'>-->
+ <frameset cols='<?php echo attr($nav_area_width); ?>,*' id='fsbody' frameborder='1' border='4' framespacing='4'>
   <frameset rows='*,0' frameborder='0' border='0' framespacing='0'>
    <frame src='left_nav.php' name='left_nav' />
    <frame src='daemon_frame.php' name='Daemon' scrolling='no' frameborder='0'

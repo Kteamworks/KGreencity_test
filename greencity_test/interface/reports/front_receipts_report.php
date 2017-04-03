@@ -165,6 +165,33 @@ while ($urow = sqlFetchArray($ures)) {
 			
 			?>
 		</select>	</td>
+		<td>
+			<select name='type' id='type'>
+		    <option value='all' selected>All</option>
+			<?php 
+			
+			$ures = sqlStatement("SELECT distinct method FROM payments");
+
+while ($urow = sqlFetchArray($ures)) {
+  $umethod = $urow['method'];
+  //if ($urow['fname']) $uname .= ", " . $urow['fname'];
+  echo " <option value='" . $urow['method'] . "'";
+  echo ">$umethod</option>\n";
+  //$optto .= $tmp1 . $tmp2;
+  //echo $optto;
+  //if ($urow['id'] == $_SESSION['authUserID']) $tmp1 .= " selected";
+ // $optfrom .= $tmp1 . $tmp2;
+ // $ulist .= "ulist[$i] = '" . addslashes($uname) . "|" .
+ ////   $urow['id'] . "|" . addslashes($urow['specialty']) . "';\n";
+//  ++$i;
+}
+			
+						
+			
+			
+			
+			?>
+		</select>	</td>
 		</tr>
 	</table>
 
@@ -238,12 +265,21 @@ while ($urow = sqlFetchArray($ures)) {
   $total1 = 0.00;
   $total2 = 0.00;
 $usr=$_POST['usr'];
+$type=$_POST['type'];
 if ($usr=='all')
 {
 	$cod=' ';
 }
  else{
 	 $cod=" AND r.user='$usr' ";
+ }
+ 
+ if ($type=='all')
+{
+	$cod1=' ';
+}
+ else{
+	 $cod1=" AND r.method='$type' ";
  }
   $query = "SELECT r.pid, r.dtime,r.receipt_id, " .
     "SUM(r.amount1) AS amount1, " .
@@ -260,6 +296,7 @@ if ($usr=='all')
     "r.dtime >= '$from_date' AND " .
     "r.dtime <= '$to_date'" .
 	 $cod.
+	 $cod1.
     "GROUP BY r.dtime, r.pid,r.encounter ORDER BY r.dtime, r.pid,r.encounter";
 
   // echo "<!-- $query -->\n"; // debugging

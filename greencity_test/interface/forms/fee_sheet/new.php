@@ -84,10 +84,10 @@ function contraceptionClass($code_type, $code) {
 //
 function echoLine($lino,$codetype, $code, $modifier, $ndc_info='',
   $auth = TRUE, $del = FALSE, $units = NULL, $fee = NULL, $id = NULL,
-  $billed = FALSE, $code_text = NULL, $justify = NULL, $provider_id = 0, $notecodes='',$grpb,$payout)
+  $billed = FALSE, $code_text = NULL, $justify = NULL, $provider_id = 0, $notecodes='',$grpb)
 {
   global $code_types, $ndc_applies, $ndc_uom_choices, $justinit, $pid;
-  global $contraception, $usbillstyle, $hasCharges,$payout;
+  global $contraception, $usbillstyle, $hasCharges;
 /* $grpbillq=sqlQuery("select grpbill,id from billing where encounter='$enc'");
 $gbfa=sqlFetchArray($grpbillq); */
 
@@ -116,7 +116,7 @@ $gbfa=sqlFetchArray($grpbillq); */
     if (empty($units)) $units = max(1, intval($result['units']));
     if (!isset($fee)) {
       // Fees come from the prices table now.
-      $query = "SELECT prices.pr_price,prices.payout " .
+      $query = "SELECT prices.pr_price " .
         "FROM patient_data, prices WHERE " .
         "patient_data.pid = ? AND " .
         "prices.pr_id = ? AND " .
@@ -126,12 +126,9 @@ $gbfa=sqlFetchArray($grpbillq); */
       echo "\n<!-- $query -->\n"; // debugging
       $prrow = sqlQuery($query, array($pid,$result['id']) );
       $fee = empty($prrow) ? 0 : $prrow['pr_price'];
-	  $payout=$prrow['payout'];
-	  var_dump($payout);
     }
   }
   $fee = sprintf('%01.2f', $fee);
-  var_dump($payout);
   if (empty($units)) $units = 1;
   $units = max(1, intval($units));
   // We put unit price on the screen, not the total line item fee.
@@ -171,10 +168,8 @@ $gbfa=sqlFetchArray($grpbillq); */
       echo "  <td class='billcell' align='right'>" . text(oeFormatMoney($price)) . "</td>\n";
       if ($codetype != 'COPAY') {
         echo "  <td class='billcell' align='center'>" . text($units) . "</td>\n";
-		echo "  <td class='billcell' align='center'>" . text($payout) . "</td>\n";
 		
       } else {
-		echo "  <td class='billcell' align='center'>" . text($payout) . "</td>\n";  
         echo "  <td class='billcell'>&nbsp;</td>\n";
       }
 	  
@@ -250,7 +245,6 @@ $gbfa=sqlFetchArray($grpbillq); */
           "value='" . attr($units) . "' size='2' style='text-align:right'>";
         } else {
           echo "<input type='hidden' name='bill[".attr($lino)."][units]' value='" . attr($units) . "'>";
-		  echo "<input type='hidden' name='bill[".attr($lino)."][payout]' value='" . attr($payout) . "'>";
 		  
         }
         echo "</td>\n";
@@ -372,7 +366,6 @@ function echoProdLine($lino, $drug_id, $del = FALSE, $units = NULL,
     if (fees_are_used()) {
       echo "  <td class='billcell' align='right'>" . text(oeFormatMoney($price)) . "</td>\n";
       echo "  <td class='billcell' align='center'>" . text($units) . "</td>\n";
-	  echo "  <td class='billcell' align='center'>" . text($payout) . "</td>\n";
     }
     if (justifiers_are_used()) {
       echo "  <td class='billcell' align='center'$usbillstyle>&nbsp;</td>\n"; // justify
@@ -394,10 +387,6 @@ function echoProdLine($lino, $drug_id, $del = FALSE, $units = NULL,
       echo "  <td class='billcell' align='center'>";
       echo "<input type='text' name='prod[".attr($lino)."][units]' " .
         "value='" . attr($units) . "' size='2' style='text-align:right'>";
-      echo "</td>\n";
-	  echo "  <td class='billcell' align='center'>";
-      echo "<input type='text' name='prod[".attr($lino)."][payout]' " .
-        "value='" . attr($payout) . "' size='2' style='text-align:right'>";
       echo "</td>\n";
     }
     if (justifiers_are_used()) {
@@ -741,7 +730,7 @@ if (!$alertmsg && ($_POST['bn_save'] || $_POST['bn_save_close'])) {
         "pid = ? AND encounter = ? AND billed = 0", array($pid,$encounter));
       sqlStatement("UPDATE billing SET billed = 1, bill_date = NOW() WHERE " .
         "pid = ? AND encounter = ? AND billed = 0 AND " .
-        "activity = 1", array($pid,$encounter));
+        "activity = 1 AND code_type!='Pharmacy Charge'", array($pid,$encounter));
     }
     else {
       // Would be good to display an error message here... they clicked
@@ -1071,9 +1060,31 @@ if ($GLOBALS['sell_non_drug_products']) {
     echo " </tr>\n";
     $i = 0;
   }  
-  
+//Scans
+    ++$i;
+  echo ($i <= 1) ? " <tr>\n" : "";
+  echo "  <td width='50%' align='center' nowrap>\n";
+  echo "   <select name='Scans' style='width:96%' onchange='codeselect(this)'>\n";
+  echo "    <option value=''> " . xlt('Scans') . "\n";
+  $tres = sqlStatement("SELECT c.Service_Id,c.code,c.code_text,c.code_type " .
+    "FROM codes AS c WHERE " .
+    " c.active = 1 AND c.code_type=14  " .
+    "ORDER BY c.code");
+  while ($trow = sqlFetchArray($tres)) {
+    echo "    <option value='Scans|" . attr($trow['code']) . '|' . attr($trow['code_text']) . "'>" .
+      text($trow['code_text']);
+    //if ($trow['name'] !== $trow['selector']) echo ' ' . text($trow['name']);
+    echo "</option>\n";
+  }
+  echo "   </select>\n";
+  echo "  </td>\n";
+  if ($i >= $FEE_SHEET_COLUMNS) {
+    echo " </tr>\n";
+    $i = 0;
+  }  
   
   //Pharmacy
+  /*
   ++$i;
   echo ($i <= 1) ? " <tr>\n" : "";
   echo "  <td width='50%' align='center' nowrap>\n";
@@ -1093,7 +1104,7 @@ if ($GLOBALS['sell_non_drug_products']) {
     $i = 0;
   }  
   
-  
+  */
   
   /*
   
@@ -1218,7 +1229,6 @@ echo " </tr>\n";
 <?php if (fees_are_used()) { ?>
   <td class='billcell' align='right'><b><?php echo xlt('Price');?></b>&nbsp;</td>
   <td class='billcell' align='center'><b><?php echo xlt('Units');?></b></td>
-  <td class='billcell' align='center'><b><?php echo xlt('Payout');?></b></td>
 <?php } ?>
 <?php if (justifiers_are_used()) { ?>
   <td class='billcell' align='center'<?php echo $usbillstyle; ?>><b><?php echo xlt('Justify');?></b></td>
@@ -1285,7 +1295,7 @@ if ($billresult) {
     echoLine($bill_lino, $iter["code_type"], trim($iter["code"]),
       $modifier, $ndc_info,  $authorized,
       $del, $units, $fee, $iter["id"], $iter["billed"],
-      $iter["code_text"], $justify, $provider_id, $notecodes,$grpb,$payout);
+      $iter["code_text"], $justify, $provider_id, $notecodes,$grpb);
 	  
 	
   }
@@ -1297,7 +1307,7 @@ $resMoneyGot = sqlStatement("SELECT pay_amount as PatientPay,session_id as id,da
 while($rowMoneyGot = sqlFetchArray($resMoneyGot)){
   $PatientPay=$rowMoneyGot['PatientPay']*-1;
   $id=$rowMoneyGot['id'];
-  echoLine(++$bill_lino,'COPAY','','',$rowMoneyGot['date'],'1','','',$PatientPay,$id,$payout);
+  echoLine(++$bill_lino,'COPAY','','',$rowMoneyGot['date'],'1','','',$PatientPay,$id);
 }
 
 // Echo new billing items from this form here, but omit any line
@@ -1326,7 +1336,7 @@ if ($_POST['bill']) {
     echoLine(++$bill_lino, $iter["code_type"], $iter["code"], trim($iter["mod"]),
       $ndc_info, $iter["auth"], $iter["del"], $units,
       $fee, NULL, FALSE, NULL, $iter["justify"], 0 + $iter['provid'],
-      $iter['notecodes'],$payout);
+      $iter['notecodes']);
 	
   }
 }
@@ -1354,7 +1364,7 @@ while ($srow = sqlFetchArray($sres)) {
     $units = max(1, intval(trim($pline['units'])));
     $fee   = sprintf('%01.2f',(0 + trim($pline['price'])) * $units);
   }
-  echoProdLine($prod_lino, $drug_id, $del, $units, $fee, $sale_id, $billed);
+  //echoProdLine($prod_lino, $drug_id, $del, $units, $fee, $sale_id, $billed);
 }
 
 // Echo new product items from this form here, but omit any line
@@ -1367,7 +1377,7 @@ if ($_POST['prod']) {
     // $fee = 0 + trim($iter['fee']);
     $units = max(1, intval(trim($iter['units'])));
     $fee   = sprintf('%01.2f',(0 + trim($iter['price'])) * $units);
-    echoProdLine(++$prod_lino, $iter['drug_id'], FALSE, $units, $fee);
+    //echoProdLine(++$prod_lino, $iter['drug_id'], FALSE, $units, $fee);
   }
 }
 
@@ -1386,7 +1396,7 @@ if ($_POST['newcodes']) {
         "AND type = 'primary' ORDER BY date DESC LIMIT 1", array($pid) );
       $code = sprintf('%01.2f', 0 + $tmp['copay']);
       echoLine(++$bill_lino, $newtype, $code, '', date("Y-m-d"), '1', '0', '1',
-        sprintf('%01.2f', 0 - $code),$payout);
+        sprintf('%01.2f', 0 - $code));
     }
     else if ($newtype == 'PROD') {
       $result = sqlQuery("SELECT * FROM drug_templates WHERE " .
@@ -1400,7 +1410,7 @@ if ($_POST['newcodes']) {
         "prices.pr_level = patient_data.pricelevel " .
         "LIMIT 1", array($pid,$newcode,$newsel) );
       $fee = empty($prrow) ? 0 : $prrow['pr_price'];
-      echoProdLine(++$prod_lino, $newcode, FALSE, $units, $fee);
+      //echoProdLine(++$prod_lino, $newcode, FALSE, $units, $fee);
     }
 	
 	
@@ -1415,7 +1425,7 @@ if ($_POST['newcodes']) {
         if (!empty($tmp)) $ndc_info = $tmp['ndc_info'];
       }
 	 
-      echoLine(++$bill_lino, $newtype, $code, trim($modifier), $ndc_info,$payout);
+      echoLine(++$bill_lino, $newtype, $code, trim($modifier), $ndc_info);
     }
   }
 }

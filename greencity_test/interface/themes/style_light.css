@@ -281,13 +281,7 @@ body {
   margin: 0;
   font-family: sans-serif;
   font-size: 1em; }
-td.label {
-	color: #000 !important;
-}
 
-body {
-    font-size: 14px !important;
-	}
 a, a:visited {
   color: #0078C1;
   text-decoration: none; }
@@ -505,7 +499,7 @@ a, a:visited {
  * Patient Demographics are a custom layout */
 #DEM .groupname, #DEM .label, #DEM .data {
   font-size: 0.8em;
-  }
+  vertical-align: top; }
 #DEM .groupname {
   font-weight: bold;
   color: #080;
@@ -852,7 +846,7 @@ div.tab_long {
 div.tab p:last-child {
   margin-bottom: 0; }
 div.tab table td {
-  padding-right: 30px;
+  padding-right: 1px;
   padding-bottom: 0; }
   div.tab table td .label {
     min-width: 80px; }
@@ -872,116 +866,8 @@ div.notab-right {
 .section-header {
   margin-bottom: 5px;
   border-bottom: 1px solid #ddd;
- }
- .icons-list {
-     padding: 0px;
- }
- a.allergyBtn.element {
-    /* text-align: center; */
-    margin-top: -5px;
-    /* color: #fff; */
-    /* background-color: #0078C1; */
-}
-.glossyBtn
-{ 
-    background-image:url('delete.png');
-    background-repeat:no-repeat;
-	background-position: top;
-   background-size: contain;
-     width: 40px;
-  height: 40px;
-  display: block;
-  text-indent: -99999px;
-}
-.glossyBtn:hover {
-		background-image:url('delete-32.png');
-    background-repeat:no-repeat;
-   background-size: contain;
-     width: 40px;
-  height: 40px;
-  display: block;
-  text-indent: -99999px;
-}
-.visit_ico
-{ 
+  width: 685px; }
 
-   display: block;
-    width: 40px;
-    height: 40px;
-    background: #0078C1;
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
-    background-image:url('doctor.png');
-    background-position:50% 50%;
-    background-repeat:no-repeat; 
-}
-.visit_ico:hover {
-
-	background-color: #000;
-			
-}
-.notepad
-{ 
-
-   display: block;
-    width: 40px;
-    height: 40px;
-    background: #0078C1;
-    -moz-border-radius: 15px;
-    -webkit-border-radius: 15px;
-    background-image:url('notepad.png');
-    background-position:50% 50%;
-    background-repeat:no-repeat; 
-}
-.notepad:hover {
-
-	background-color: #000;
-			
-}
-.diagnosisBtn
-{ 
-
-
-   display: block;
-    width: 40px;
-    height: 40px;
-    background: #0078C1;
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
-    background-image:url('stethoscope.png');
-    background-position:50% 50%;
-    background-repeat:no-repeat;  
-}
-.diagnosisBtn:hover {
-
-	background-color: #000;
-			
-}
-.icons-list {
-	list-style: none;
-	display: inline-flex;
-}
-.allergyBtn
-{ 
-    background-image:url('allergies.svg');
-    background-repeat:no-repeat;
-			background-color:#0078C;
-			border-radius: 50%;
-   background-size: contain;
-     width: 50px;
-  height: 50px;
-  display: block;
-  text-indent: -99999px;
-}
-.allergyBtn:hover {
-		background-image:url('54828.svg');
-    background-repeat:no-repeat;
-   background-size: contain;
-     width: 50px;
-  height: 50px;
-  display: block;
-  text-indent: -99999px;
-}
 .section-header-dynamic {
   margin-bottom: 5px;
   border-bottom: 1px solid #ddd; }

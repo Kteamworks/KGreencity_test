@@ -9,8 +9,6 @@
  */
 
 require_once("{$GLOBALS['srcdir']}/sql.inc");
-
-require_once("{$GLOBALS['srcdir']}/forms.inc");
 require_once(dirname(__FILE__) . "/classes/WSWrapper.class.php");
 require_once("{$GLOBALS['srcdir']}/formdata.inc.php");
 
@@ -366,26 +364,6 @@ function getHistoryData($pid, $given = "*", $dateStart='',$dateEnd='')
     return $res;
 }
 
-
-function getHistoryDataEnc($pid,$encounter, $given = "*", $dateStart='',$dateEnd='')
-{
-    
-    if ($dateStart && $dateEnd) {
-        $res = sqlQuery("select $given from history_data where pid = ? and encounter=? and date >= ? and date <= ? order by date DESC limit 0,1", array($pid,$encounter,$dateStart,$dateEnd) );
-    }
-    else if ($dateStart && !$dateEnd) {
-        $res = sqlQuery("select $given from history_data where pid = ? and  encounter=? and date >= ? order by date DESC limit 0,1", array($pid,$encounter,$dateStart) );
-    }
-    else if (!$dateStart && $dateEnd) {
-        $res = sqlQuery("select $given from history_data where pid = ? and encounter=? and date <= ? order by date DESC limit 0,1", array($pid,$encounter,$dateEnd) );
-    }
-    else {
-        $res = sqlQuery("select $given from history_data where pid=? and encounter=?  order by date DESC limit 0,1", array($pid,$encounter) );
-    }
-
-    return $res;
-}
-
 // function getInsuranceData($pid, $type = "primary", $given = "insd.*, DATE_FORMAT(subscriber_DOB,'%m/%d/%Y') as subscriber_DOB, ic.name as provider_name")
 function getInsuranceData($pid, $type = "primary", $given = "insd.*, ic.name as provider_name")
 {
@@ -636,7 +614,7 @@ function getPatientPID($args)
 function getPatientName($pid) {
     if (empty($pid)) return "";
     $patientData = getPatientPID(array("pid"=>$pid));
-    if (empty($patientData[0]['fname'])) return "";
+    if (empty($patientData[0]['lname'])) return "";
     $patientName =  $patientData[0]['fname'] . " " . $patientData[0]['lname'];
     return $patientName;
 }
@@ -1435,28 +1413,17 @@ function updateInsuranceData1($id, $new)
 }
 function newHistoryData($pid, $new=false) {
   $arraySqlBind = array();
-  $billarray=array();
   $sql = "insert into history_data set pid = ?, date = NOW()";
   array_push($arraySqlBind,$pid);
   if ($new) {
     while(list($key, $value) = each($new)) {
       array_push($arraySqlBind,$value);
-      $sql .= ", `$key` = ?";	 
-	  if($key=='Cons')
-	  {
-	  //array_push($billarray,$value);
-	  
-	  //$billarray="abc";
-	   //$sqlbill="insert into billing (date,encounter,servicegrp_id,service_id, code_type, code, code_text, pid, authorized, user, groupname, activity, billed, provider_id, modifier, units, fee, ndc_info, justify, notecodes) values //(NOW(),'197','7','SRV00874','Lab Test',?,'ULTRASOUND SCAN','56','1','1','Default','0','0','','1','550.00','','','','')";
-       //sqlInsert($sqlbill,array($value));
-	   
-	  }
-	  
+      $sql .= ", `$key` = ?";
     }
-	
-}
+  }
   return sqlInsert($sql, $arraySqlBind );
 }
+
 function updateHistoryData($pid,$new)
 {
         $real = getHistoryData($pid);
@@ -1465,92 +1432,18 @@ function updateHistoryData($pid,$new)
         $real['id'] = "";
 	// need to unset date, so can reset it below
 	unset($real['date']);
+
         $arraySqlBind = array();
-		 $encounter=$_SESSION['encounter'];
-		
         $sql = "insert into history_data set `date` = NOW(), ";
         while(list($key, $value) = each($real)) {
 	        array_push($arraySqlBind,$value);
                 $sql .= "`$key` = ?, ";
-				
-	  	
-      if($key=='Cons')
-	  {
-	  $billcode=$value;
-	  $billitem=explode("|",$billcode);
-	// adding once in procedure order table n forms table  
-	$ppid = 1;
-	//$form_date_ordered=;
-	$sets =
-    "date_ordered = now() " . '' . ", " .
-    "provider_id = " . $_SESSION['authUserID']               . ", " .
-    "lab_id = " . $ppid                                                 . ", " .
-    "date_collected =now() " .  ''. ", " .
-    "order_priority = '" .''              . "', " .
-    "order_status = '" . 'pending'                 . "', " .
-    "clinical_hx = '" . ''                    . "', " .
-    "patient_instructions = '" . ''  . "', " .
-    "patient_id = '" . $pid                                             . "', " .
-    "encounter_id = '" . $encounter                                     . "'";
-	
-
-	$query = "INSERT INTO procedure_order SET $sets";
-    $formid = sqlInsert($query);
-    addForm($encounter, "Lab Investigation", $formid, "procedure_order", $pid, $userauthorized);
-	
-	
-	
-	  for($x=0; $x<sizeof($billitem); $x++)
-      {
-	  
-	  $sqlcodessrch="select id,code_type as ct,service_id, units, code_text from codes where code_type = 7 and code='$billitem[$x]'";
-  
-	  $result = sqlQuery($sqlcodessrch);
-	  
-	  $serviceid=$sqlcodessrch['service_id'];
-	  $queryprc = "SELECT prices.pr_price prp " .
-        "FROM patient_data, prices WHERE " .
-        "patient_data.pid = ? AND " .
-        "prices.pr_id = ? AND " .
-        "prices.pr_selector = '' AND " .
-        "prices.pr_level = patient_data.pricelevel " .
-        "LIMIT 1";
-      
- 
-      $prrow = sqlQuery($queryprc, array($pid,$result['id']) );
-	  $encounter=$_SESSION['encounter'];
-	  $sqlbill="insert into billing (date,encounter,servicegrp_id,service_id, code_type, code, code_text, pid, authorized, user, groupname, activity, billed, provider_id, modifier, units, fee, ndc_info, justify, notecodes) values (NOW(),?,'7',?,'Lab Test',?,?,?,'1','1','Default','1','0',?,'','1',?,'','','')";
-       sqlInsert($sqlbill,array($encounter,$serviceid,$billitem[$x],$billitem[$x],$pid,$_SESSION['authUser'],$prrow['prp']));
-	
-	
-	$re=sqlQuery("select procedure_type_id  from procedure_type where name='$billitem[$x]'");
-	$ptid=$re['procedure_type_id'];
-	$d='';
-	if($ptid!=null){
-	$poseq = sqlInsert("INSERT INTO procedure_order_code SET ".
-      "procedure_order_id = ?, " .
-      "diagnoses = ?, " .
-      "procedure_code = (SELECT procedure_code FROM procedure_type WHERE procedure_type_id = ?), " .
-      "procedure_name = ?",
-      array($formid, $d, $ptid, $billitem[$x]));
-	  }
-
-	}
-	   
-	   
-	   
-	  }
-	  
-	   
-	   
-	   
 	}
         $sql = substr($sql, 0, -2);
-		
-		
-  
+
         return sqlInsert($sql, $arraySqlBind );
 }
+
 function sync_patient($id,$fname,$lname,$street,$city,$postal_code,$state,$phone_home,
                 $phone_biz,$phone_cell,$email,$pid="")
 {

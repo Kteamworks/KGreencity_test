@@ -47,7 +47,6 @@ class MyMailer extends PHPMailer
                 $this->Username = $GLOBALS['SMTP_USER'];
                 $this->Password = $GLOBALS['SMTP_PASS'];
                 $this->Port = $GLOBALS['SMTP_PORT'];
-				$this->SMTPSecure = "ssl";
             }
             break;
             case "SENDMAIL" :

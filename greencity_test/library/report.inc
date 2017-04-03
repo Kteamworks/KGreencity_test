@@ -246,7 +246,7 @@ function getPatientBillingEncounter($pid, $encounter) {
     "FROM billing LEFT JOIN users AS u ON u.id = billing.provider_id " .
     "WHERE pid='" . mysql_real_escape_string($pid) . "' AND " .
     "encounter = '" . mysql_real_escape_string($encounter) .
-    "' AND activity='1' GROUP BY billing.code_type ORDER BY billing.code_type desc";
+    "' AND activity='1' AND billing.code_type!="Pharmacy Charge" GROUP BY billing.code_type ORDER BY billing.code_type desc";
   *******************************************************************/
   $erow = sqlQuery("SELECT provider_id FROM form_encounter WHERE " .
     "pid = '$pid' AND encounter = '$encounter' " .
@@ -260,7 +260,38 @@ function getPatientBillingEncounter($pid, $encounter) {
     "( b.provider_id  = 0 AND u.id = $inv_provider ) " .
     "WHERE pid='" . mysql_real_escape_string($pid) . "' AND " .
     "encounter = '" . mysql_real_escape_string($encounter) .
-    "' AND activity = '1' ORDER BY b.code_type desc";
+    "' AND activity = '1'  AND b.code_type!='Pharmacy Charge' ORDER BY b.code_type desc";
+  /******************************************************************/
+	$res = sqlStatement($sql);
+	$billings = array();
+	while($result = sqlFetchArray($res)) {
+		$billings[] = $result;
+	}
+	return $billings;
+}
+
+function getPatientBillingEncounterPharm($pid, $encounter) {
+  /*******************************************************************
+	$sql = "SELECT billing.*, u.id, u.fname, u.mname, u.lname, " .
+    "CONCAT(u.fname,' ', u.lname) AS provider_name, u.federaltaxid " .
+    "FROM billing LEFT JOIN users AS u ON u.id = billing.provider_id " .
+    "WHERE pid='" . mysql_real_escape_string($pid) . "' AND " .
+    "encounter = '" . mysql_real_escape_string($encounter) .
+    "' AND activity='1' AND billing.code_type="Pharmacy Charge" GROUP BY billing.code_type ORDER BY billing.code_type desc";
+  *******************************************************************/
+  $erow = sqlQuery("SELECT provider_id FROM form_encounter WHERE " .
+    "pid = '$pid' AND encounter = '$encounter' " .
+    "ORDER BY id DESC LIMIT 1");
+  $inv_provider = $erow['provider_id'] + 0;
+	$sql = "SELECT b.*, u.id, u.fname, u.mname, u.lname, " .
+    "CONCAT(u.fname,' ', u.lname) AS provider_name, u.federaltaxid " .
+    "FROM billing AS b " .
+    "LEFT JOIN users AS u ON " .
+    "( b.provider_id != 0 AND u.id = b.provider_id ) OR " .
+    "( b.provider_id  = 0 AND u.id = $inv_provider ) " .
+    "WHERE pid='" . mysql_real_escape_string($pid) . "' AND " .
+    "encounter = '" . mysql_real_escape_string($encounter) .
+    "' AND activity = '1'  AND b.code_type='Pharmacy Charge' ORDER BY b.code_type desc";
   /******************************************************************/
 	$res = sqlStatement($sql);
 	$billings = array();
@@ -277,7 +308,7 @@ function getPatientBillingEncounter2($pid, $encounter) {
     "FROM billing LEFT JOIN users AS u ON u.id = billing.provider_id " .
     "WHERE pid='" . mysql_real_escape_string($pid) . "' AND " .
     "encounter = '" . mysql_real_escape_string($encounter) .
-    "' AND activity='1' AND grpbill='1' and subbillprint IN ( '0') GROUP BY billing.code_type ORDER BY billing.code_type,date";
+    "' AND activity='1' and code_type!='Pharmacy Charge' AND grpbill='1' and subbillprint IN ( '0') GROUP BY billing.code_type ORDER BY billing.code_type,date";
   *******************************************************************/
   $erow = sqlQuery("SELECT provider_id FROM form_encounter WHERE " .
     "pid = '$pid' AND encounter = '$encounter' " .

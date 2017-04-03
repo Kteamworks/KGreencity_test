@@ -86,31 +86,7 @@ function postError($msg) {
 
   // MySQL doesn't grok full outer joins so we do it the hard way.
   //
-  $query = "( " .
-   "SELECT " .
-   "e.pc_eventDate, e.pc_startTime, " .
-   "fe.encounter, fe.date AS encdate, " .
-   "f.authorized, " .
-   "p.fname, p.lname, p.mname,p.genericname1,p.pid, p.pubpid, " .
-   "CONCAT( u.username ) AS docname " .
-   "FROM openemr_postcalendar_events AS e " .
-   "LEFT OUTER JOIN form_encounter AS fe " .
-   "ON fe.date = e.pc_eventDate AND fe.pid = e.pc_pid " .
-   "LEFT OUTER JOIN forms AS f ON f.pid = fe.pid AND f.encounter = fe.encounter AND f.formdir = 'newpatient' " .
-   "LEFT OUTER JOIN patient_data AS p ON p.pid = e.pc_pid " .
-   // "LEFT OUTER JOIN users AS u ON BINARY u.username = BINARY f.user WHERE ";
-   "LEFT OUTER JOIN users AS u ON u.id = fe.provider_id WHERE ";
-  if ($form_to_date) {
-   $query .= "e.pc_eventDate >= '$form_from_date' AND e.pc_eventDate <= '$form_to_date' ";
-  } else {
-   $query .= "e.pc_eventDate = '$form_from_date' ";
-  }
-  if ($form_facility !== '') {
-   $query .= "AND e.pc_facility = '$form_facility' ";
-  }
-  //$query .= "AND ( e.pc_catid = 10 ) " ;
-  $query .= "AND e.pc_pid != '' AND e.pc_apptstatus != '?' " .
-   ") UNION ( " .
+  $query = 
    "SELECT " .
    "e.pc_eventDate, e.pc_startTime, " .
    "fe.encounter, fe.date AS encdate, " .
@@ -129,15 +105,15 @@ function postError($msg) {
    "LEFT OUTER JOIN users AS u ON u.id = fe.provider_id WHERE ";
   if ($form_to_date) {
    // $query .= "LEFT(fe.date, 10) >= '$form_from_date' AND LEFT(fe.date, 10) <= '$form_to_date' ";
-   $query .= "fe.date >= '$form_from_date 00:00:00' AND fe.date <= '$form_to_date 23:59:59' AND fe.pc_catid=10 ";
+   $query .= "fe.date >= '$form_from_date 00:00:00' AND fe.date <= '$form_to_date 23:59:59' AND fe.pc_catid IN (10,22,20) ";
   } else {
    // $query .= "LEFT(fe.date, 10) = '$form_from_date' ";
-   $query .= "fe.date >= '$form_from_date 00:00:00' AND fe.date <= '$form_from_date 23:59:59' AND  fe.pc_catid=10 ";
+   $query .= "fe.date >= '$form_from_date 00:00:00' AND fe.date <= '$form_from_date 23:59:59' AND  fe.pc_catid=(10,22,20) ";
   }
   if ($form_facility !== '') {
    $query .= "AND fe.facility_id = '$form_facility'   ";
   }
-  $query .= ") ORDER BY docname, IFNULL(pc_eventDate, encdate), pc_startTime";
+  $query .= " ORDER BY docname,encdate,IFNULL(pc_eventDate, encdate), pc_startTime";
 
   $res = sqlStatement($query);
  }
@@ -172,12 +148,12 @@ function postError($msg) {
 }
 
 </style>
-<title><?php  xl('Appointments and Encounters','e'); ?></title>
+
 </head>
 
 <body class="body_top">
 
-<span class='title'><?php xl('Report','e'); ?> - <?php xl('Appointments and Encounters','e'); ?></span>
+<span class='title'><?php xl('Report','e'); ?> - <?php xl('Doctor Charges','e'); ?></span>
 
 <div id="report_parameters_daterange">
 <?php echo date("d F Y", strtotime($form_from_date)) ." &nbsp; to &nbsp; ". date("d F Y", strtotime($form_to_date)); ?>
@@ -285,12 +261,12 @@ function postError($msg) {
 <table>
 
  <thead>
-  <th> &nbsp;<?php  xl('Practitioner','e'); ?> </th>
+  <th> &nbsp;<?php  xl('Doctor','e'); ?> </th>
   <th> &nbsp;<?php  xl('Date/Appt','e'); ?> </th>
   <th> &nbsp;<?php  xl('Patient','e'); ?> </th>
   <th> &nbsp;<?php  xl('ID','e'); ?> </th>
   <th align='right'> <?php  xl('MED No.','e'); ?>&nbsp; </th>
-  <th align='right'> <?php  xl('Encounter','e'); ?>&nbsp; </th>
+  <th align='right'> <?php  xl('Visit Id','e'); ?>&nbsp; </th>
   <th align='right'> <?php  xl('Charges','e'); ?>&nbsp; </th>
   <th align='right'> <?php  xl('Copays','e'); ?>&nbsp; </th>
   <th> <?php  xl('Billed','e'); ?> </th>
@@ -318,9 +294,9 @@ function postError($msg) {
 
    // Scan the billing items for status and fee total.
    //
-   $query = "SELECT code_type, code, modifier, authorized, billed, fee, justify " .
+   $query = "SELECT code_type, code, modifier, authorized, billed, sum(fee) fee, justify " .
     "FROM billing WHERE " .
-    "pid = '$patient_id' AND encounter = '$encounter' AND activity = 1 AND code_type='Services'";
+    "pid = '$patient_id' AND encounter = '$encounter' AND activity = 1";
    $bres = sqlStatement($query);
    //
    while ($brow = sqlFetchArray($bres)) {
@@ -426,7 +402,7 @@ function postError($msg) {
     }
     *****************************************************************/
     if (empty($row['pc_eventDate'])) {
-      echo oeFormatShortDate(substr($row['encdate'], 0, 10));
+      echo date('d/M/y g:i a',strtotime( $row['encdate'] )); //oeFormatShortDate(substr($row['encdate'], 0, 10));
     }
     else {
       echo oeFormatShortDate($row['pc_eventDate']) . ' ' . substr($row['pc_startTime'], 0, 5);
