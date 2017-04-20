@@ -8,10 +8,10 @@
 // of the License, or (at your option) any later version.
 
 // Sanitize escapes and stop fake register globals.
-//
 
-$page = $_SERVER['PHP_SELF'];
-$sec = "120";
+
+//$page = $_SERVER['PHP_SELF'];
+//$sec = "120";
 
 $sanitize_all_escapes = true;
 $fake_register_globals = false;
@@ -335,7 +335,7 @@ $("#pt_table tbody tr").each(function(i){
     $(this).prepend("<td style='text-align: center'>" + con + "</td>")
 });
 $("#pt_table thead tr:nth-child(2)").each(function(i){
-        $(this).prepend("<th>sr No</th>")
+        $(this).prepend("<th>Sr No</th>")
 });
 }
 setTimeout(explode, 2000);

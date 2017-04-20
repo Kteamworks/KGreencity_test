@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.3.1, created on 2015-03-18 11:50:11
+<?php /* Smarty version 2.3.1, created on 2017-04-03 11:30:06
          compiled from default/views/global/navigation.html */ ?>
 
 <?php 

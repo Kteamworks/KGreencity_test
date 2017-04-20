@@ -5,7 +5,7 @@
 $host	= 'localhost';
 $port	= '3306';
 $login	= 'root';
-$pass	= '';
+$pass	= 'admin123';
 $dbase	= 'greencity';
 
 //Added ability to disable

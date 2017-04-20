@@ -17,7 +17,10 @@ include_once('../globals.php');
         display:block;
       }
 </style>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+      
+<script type="text/javascript" src="../../library/js/fancybox/jquery.fancybox-1.2.6.js"></script>
 <script type="text/javascript" language="javascript">
 function toencounter(rawdata) {
 //This is called in the on change event of the Encounter list.
@@ -67,6 +70,7 @@ function showhideMenu() {
 	}
 }
 </script>
+
 </head>
 <body class="body_title">
 <?php
@@ -100,8 +104,9 @@ $res = sqlQuery("select * from users where username='".$_SESSION{"authUser"}."'"
 </td>
 <td style="margin:3px 0px 3px 0px;vertical-align:middle;">
         <div style='margin-left:10px; float:left; display:none' id="current_patient_block">
-            <span class='text'><?php xl('Patient','e'); ?>:&nbsp;</span><span class='title_bar_top' id="current_patient"><b><?php xl('None','e'); ?></b></span>
-        </div>
+            <span class='text' ><?php xl('Patient','e'); ?>:&nbsp;</span><span class='title_bar_top' id="current_patient"><b><?php xl('None','e'); ?></b></span>
+    <!--   <a href="../forms/newpatient/new.php?autoloaded=1&amp;calenc=" class="element visit-iframe" target="RTop" style="float:left;font-size:25px;margin-left: 35px;" title="New Visit"><i class="fa fa-plus-circle"></i></a> -->
+	</div>
 </td>
 <td style="margin:3px 0px 3px 0px;vertical-align:middle;" align="left">
 	<table cellspacing="0" cellpadding="1" ><tr><td>
@@ -135,6 +140,16 @@ $res = sqlQuery("select * from users where username='".$_SESSION{"authUser"}."'"
 
 <script type="text/javascript" language="javascript">
 parent.loadedFrameCount += 1;
+    $(".visit-iframe").fancybox( {
+  "left":10,
+	"overlayOpacity" : 0.0,
+	"showCloseButton" : true,
+	"frameHeight" : 400,
+	"frameWidth" : 670
+  });
+  $("#fancy_close").click(function() {
+	  window.location.reload();
+	  });
 </script>
 
 </body>

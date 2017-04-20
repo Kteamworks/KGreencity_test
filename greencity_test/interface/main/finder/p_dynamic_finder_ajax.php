@@ -181,7 +181,7 @@ $res = sqlStatement($query);
 while ($row = sqlFetchArray($res)) {
   
   // Each <tr> will have an ID identifying the patient.
-  if($row['visit_status'] == 0) {
+  if($row['visit_status'] == 1) {
 	    $arow = array('DT_RowId' => 'pid_' . $row['pid'],'DT_RowClass' => 'PT_INACTIVE');
   }
   else {

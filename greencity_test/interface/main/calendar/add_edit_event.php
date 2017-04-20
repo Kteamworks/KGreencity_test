@@ -143,59 +143,8 @@ function DOBandEncounter()
 				 $info_msg .= xl("New Visit created with id"); 
 				 $info_msg .= " $encounter";
 			}
-		$cid=$_POST['form_category'];
-		 if($cid!=5)
-		{
-		 $provider_id=$_POST['form_provider'];
-		 $row1=sqlStatement("Select code,code_type,code_text,pr_price,username from codes a,prices b, users c where a.id=b.pr_id and a.code=c.username and c.id='".$provider_id."'");
-		 $row2=  sqlFetchArray($row1);
-		 $code=$row2['code'];
-	     $codetext=$row2['code_text'];
-	     $codetype="Doctor Charges";
-		 $billed=0;
-  	     $units=1;
-  	     $fee=$row2['pr_price'];
-	     $authrzd=1;
-	     $modif="";
-		 $act=1;
-		 $grpn="Default";
-		 $pid=$_POST['form_pid'];
-		 $userid= $_SESSION['authUserID'];
-		 if($cid==13)
-		 {
-			$codetype="Services"; 
-			$code_text="CASUALTY CONSULTATION (DAY)"; 
-			$code=$code_text;
-			$fee=60;
-		 }
-		 if($cid==15)
-		 {
-			$codetype="Services"; 
-			$code_text="CASUALTY CONSULTATION (NIGHT)"; 
-			$code=$code_text;
-			$fee=80;
-		 }
+		//$cid=$_POST['form_category'];
 		
-    sqlInsert("INSERT INTO billing SET " .
-      "date = '" . add_escape_custom($event_date) . "', " .
-	  "user = '" . add_escape_custom($userid) . "', " .
-      "bill_date = '" . add_escape_custom($event_date) . "', " .
-      "code_type = '" . add_escape_custom($codetype) . "', " .
-      "code = '" . add_escape_custom($code) . "', " .
-      "code_text = '" . add_escape_custom($codetext) . "', " .
-      "units = '" . add_escape_custom($units) . "', " .
-      "billed = '" . add_escape_custom($billed) . "', " .
-      "fee = '" . add_escape_custom($fee) . "', " .
-      "pid = '" . add_escape_custom($pid) . "', " .
-      "encounter = '" . add_escape_custom($encounter) . "', " .
-	  "modifier = '" . add_escape_custom($modif) . "', " .
-	  "authorized = '" . add_escape_custom($authrzd) . "', " .
-	  "activity = '" . add_escape_custom($act) . "', " .
-	  "groupname = '" . add_escape_custom($grpn) . "', " .
-      "provider_id = '" . add_escape_custom($provider_id) . "'");
-		 
-		 
-		 }
 	 }
  }
 //================================================================================================================
@@ -242,6 +191,7 @@ if ( $eid ) {
 //=============================================================================================================================
 if ($_POST['form_action'] == "duplicate" || $_POST['form_action'] == "save") 
  {
+
     // the starting date of the event, pay attention with this value
     // when editing recurring events -- JRM Oct-08
     $event_date = fixDate($_POST['form_date']);
@@ -476,6 +426,7 @@ if ($_POST['form_action'] == "save") {
                 // after the two diffs above, we must update for remaining providers
                 // those who are intersected in $providers_current and $providers_new
                 foreach ($_POST['form_provider'] as $provider) {
+					
                     sqlStatement("UPDATE openemr_postcalendar_events SET " .
                         "pc_catid = '" . add_escape_custom($_POST['form_category']) . "', " .
                         "pc_pid = '" . add_escape_custom($_POST['form_pid']) . "', " .
@@ -834,7 +785,7 @@ if ($_POST['form_action'] == "save") {
 
  // Get the providers list.
  $ures = sqlStatement("SELECT id, username, fname, lname FROM users WHERE " .
-  "authorized != 0 AND active = 1 ORDER BY fname, lname");
+  "authorized != 0 AND active = 1 and username like 'DR%' ORDER BY fname, lname");
 
  // Get event categories.
  $cres = sqlStatement("SELECT pc_catid, pc_catname, pc_recurrtype, pc_duration, pc_end_all_day " .
@@ -960,15 +911,52 @@ td { font-size:0.8em; }
  // Do whatever is needed when a new event category is selected.
  // For now this means changing the event title and duration.
  function set_category() {
+	var sel = $('#aioConceptName').val();
+	
+	getselval(sel);
   var f = document.forms[0];
   var s = f.form_category;
   if (s.selectedIndex >= 0) {
    var catid = s.options[s.selectedIndex].value;
+     //if(catid==23)
+   f.form_title.value = s.options[s.selectedIndex].text;
+  
+   f.form_duration.value = durations[catid];
+   set_display();
+  }
+ }
+ 
+ 
+function getselval(sel)
+{
+    if(sel == 22)   {
+	 	
+	 $(".hidescan").css("display","table-row");
+	} else{
+                $(".hidescan").css("display","none");
+            }
+}
+
+function set_scans() {
+	
+	//var sel = $('#aioConceptName').val();
+	
+	//getselval(sel);
+  var f = document.forms[0];
+  
+  var s = f.scan_selected;
+ 
+  if (s.selectedIndex >= 0) {
+   var scanid = s.options[s.selectedIndex].value;
    f.form_title.value = s.options[s.selectedIndex].text;
    f.form_duration.value = durations[catid];
    set_display();
   }
  }
+
+
+
+
 
  // Modify some visual attributes when the all-day or timed-event
  // radio buttons are clicked.
@@ -1158,7 +1146,7 @@ $classpati='';
    <b><?php echo ($GLOBALS['athletic_team'] ? xlt('Team/Squad') : xlt('Category')); ?>:</b>
   </td>
   <td nowrap>
-   <select name='form_category' onchange='set_category()' style='width:100%'>
+   <select name='form_category' onchange='set_category()'  id="aioConceptName" style='width:100%'>
 <?php echo $catoptions ?>
    </select>
   </td>
@@ -1171,7 +1159,21 @@ $classpati='';
    <?php echo xlt('All day event'); ?>
   </td>
  </tr>
+ <?php $qscan = "SELECT * from codes WHERE code_type=14"; $resscn = sqlStatement($qscan); ?>
+<tr class="hidescan" style="display:none">
+<td width='1%' nowrap>
+   <b><?php echo ($GLOBALS['athletic_team'] ? xlt('Team/Squad') : xlt('Scans List')); ?>:</b>
+  </td>
+  <td nowrap>
+   <select name='scan_selected' onchange='set_scans()' style='width:100%'>
+   <option value="">Select Scan</option>
+<?php while($scans = sqlFetchArray($resscn)) { ?>      
 
+<option value="<?php echo $scans[id] ?>"><?php echo $scans['code_text']; ?></option>
+<?php } ?>
+   </select>
+  </td>
+</tr>
  <tr>
   <td nowrap>
    <b><?php echo xlt('Date'); ?>:</b>
@@ -1209,6 +1211,7 @@ $classpati='';
    <b><?php echo ($GLOBALS['athletic_team'] ? xlt('Team/Squad') : xlt('Title')); ?>:</b>
   </td>
   <td nowrap>
+  
    <input type='text' size='10' name='form_title' value='<?php echo attr($row['pc_title']); ?>'
     style='width:100%'
     title='<?php echo xla('Event title'); ?>' />

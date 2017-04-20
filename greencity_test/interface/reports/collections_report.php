@@ -305,10 +305,10 @@ function checkAll(checked) {
   <td width='610px'>
 	<div style='float:left'>
 
-	<table class='text'>
+	<table class='text' style='border-left:1px solid; width:100%; height:100%'>
 		<tr>
 			<td class='label'>
-				<table>
+				<table style='border-left:1px solid; width:100%; height:100%'>
 					<tr>
 						<td><?php xl('Displayed Columns','e') ?>:</td>
 					</tr>
@@ -330,7 +330,7 @@ function checkAll(checked) {
 						   <?php xl('Policy','e') ?>&nbsp;
 						</td>
 						<td>
-						   <input type='checkbox' name='form_cb_phone'<?php if ($form_cb_phone) echo ' checked'; ?>>
+						   <input type='checkbox' name='form_cb_phone'<?php if ($form_cb_phone) echo ' '; ?>>
 						   <?php xl('Phone','e') ?>&nbsp;
 						</td>
 						<td>
@@ -365,7 +365,7 @@ function checkAll(checked) {
 		</tr>
 		</tr>
 			<td>
-				<table>
+				<table style='border-left:1px solid; width:100%; height:100%'>
 
 					<tr>
 						<td class='label'>
@@ -917,7 +917,7 @@ if ($_POST['form_refresh'] || $_POST['form_export'] || $_POST['form_csvexport'])
 ?>
 
 <div id="report_results">
-<table>
+<table style='border-left:1px solid; width:100%; height:100%'>
 
  <thead>
 <?php if ($is_due_ins) { ?>
@@ -952,13 +952,13 @@ if ($_POST['form_refresh'] || $_POST['form_export'] || $_POST['form_csvexport'])
 <?php } ?>
 <?php if (!$is_ins_summary) { ?>
   <th>&nbsp;<?php xl('Invoice','e') ?></th>
-  <th>&nbsp;<?php xl('Svc Date','e') ?></th>
+  <th>&nbsp;<?php xl('Date','e') ?></th>
 <?php if ($form_cb_adate) { ?>
   <th>&nbsp;<?php xl('Act Date','e')?></th>
 <?php } ?>
 <?php } ?>
   <th align="right"><?php xl('Charge','e') ?>&nbsp;</th>
-  <th align="right"><?php xl('Adjust','e') ?>&nbsp;</th>
+  <th align="right"><?php xl('Discount','e') ?>&nbsp;</th>
   <th align="right"><?php xl('Paid','e') ?>&nbsp;</th>
 <?php
     // Generate aging headers if appropriate, else balance header.
@@ -976,17 +976,17 @@ if ($_POST['form_refresh'] || $_POST['form_export'] || $_POST['form_csvexport'])
     }
     else {
 ?>
-  <th align="right"><?php xl('Balance','e') ?>&nbsp;</th>
+  <th align="right"><?php xl('Due','e') ?>&nbsp;</th>
 <?php
       }
 ?>
 <?php if ($form_cb_idays) { ?>
   <th align="right"><?php xl('IDays','e')?>&nbsp;</th>
 <?php } ?>
-<?php if (!$is_ins_summary) { ?>
+<!--<?php if (!$is_ins_summary) { ?>
   <th align="center"><?php xl('Prv','e') ?></th>
   <th align="center"><?php xl('Sel','e') ?></th>
-<?php } ?>
+<?php } ?>-->
 <?php if ($form_cb_err) { ?>
   <th>&nbsp;<?php xl('Error','e')?></th>
 <?php } ?>
@@ -1118,7 +1118,7 @@ if ($_POST['form_refresh'] || $_POST['form_export'] || $_POST['form_csvexport'])
         echo $row['inactive_days'] . "&nbsp;</td>\n";
       }
 ?>
-  <td class="detail" align="center">
+  <!--<td class="detail" align="center">
    <?php echo $row['duncount'] ? $row['duncount'] : "&nbsp;" ?>
   </td>
   <td class="detail" align="center">
@@ -1133,7 +1133,7 @@ if ($_POST['form_refresh'] || $_POST['form_export'] || $_POST['form_csvexport'])
         echo "   &nbsp;\n";
       }
 ?>
-  </td>
+  </td>-->
 <?php
       if ($form_cb_err) {
         echo "  <td class='detail'>&nbsp;";

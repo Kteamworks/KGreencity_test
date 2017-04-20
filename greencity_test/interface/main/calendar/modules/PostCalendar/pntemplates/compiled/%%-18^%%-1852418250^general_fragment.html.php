@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.2, created on 2016-07-13 16:56:03
+<?php /* Smarty version 2.6.2, created on 2017-04-13 23:06:03
          compiled from C:/xampp/htdocs/greencity/templates/prescription/general_fragment.html */ ?>
 <?php require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.load_plugins.php');
 smarty_core_load_plugins(array('plugins' => array(array('function', 'xl', 'C:/xampp/htdocs/greencity/templates/prescription/general_fragment.html', 4, false),)), $this); ?>
@@ -21,4 +21,4 @@ smarty_core_load_plugins(array('plugins' => array(array('function', 'xl', 'C:/xa
 	</tr>
   <?php endif; ?>
 	<?php endforeach; unset($_from); endif; ?>
-</table>
+</table>

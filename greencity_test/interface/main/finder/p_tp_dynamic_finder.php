@@ -1,4 +1,5 @@
 <?php
+
 // Copyright (C) 2012 Rod Roark <rod@sunsetsystems.com>
 // Sponsored by David Eschelbacher, MD
 //
@@ -10,8 +11,6 @@
 // Sanitize escapes and stop fake register globals.
 //
 
-$page = $_SERVER['PHP_SELF'];
-$sec = "120";
 
 $sanitize_all_escapes = true;
 $fake_register_globals = false;
@@ -260,11 +259,16 @@ document.location.href = "../../patient_file/summary/demographics.php?set_pid=" 
 		//alert(encounter);
 		<?php 
 		$specialty=sqlQuery("select newcrop_user_role,specialty from users where username='".$_SESSION['authUser']."'");
+		if($specialty['newcrop_user_role']!='erxdoctor'){?>
+		document.location.href="../../patient_file/summary/demographics.php?set_pid=" + newpid+'&encounter='+encounter;
+		<?php } ?>
+			<?php
 		if($specialty['specialty']=='Peadeatrics'){
 		?>
 		document.location.href="../../patient_file/summary/demographics_new.php?set_pid=" + newpid+'&encounter='+encounter;
-	<?php } else { ?>
+	<?php } else if($specialty['specialty']=='Gyneacology') { ?>
 		document.location.href="../../patient_file/history/history_full.php?set_pid=" + newpid+'&encounter='+encounter;
+		
 	<?php } ?>
 		/*if(name=="Transfer")
 		{

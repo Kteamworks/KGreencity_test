@@ -230,7 +230,7 @@ function setEnc(enc) {
 <?php } ?>
 </div>
 <div class="row">
-<div class="col-md-8">
+
 <div style='float:none; margin-top: 10px; margin-right:20px'>
     <table>
     <tr>
@@ -261,129 +261,7 @@ function setEnc(enc) {
 </td>
 </tr>
 </table>-->
-</div>
-<div class="col-md-4 col-sm-8 col-xs-8" style='font-size: 1.5em'>
 
-<?php
-//$qry = "select * from form_encounter f, history_data h where f.encounter=h.encounter and f.pid=? group by f.encounter order by f.date desc";
-$qry= "select * from form_encounter f where f.pid=? group by f.encounter order by f.date desc";
-          $pdata = sqlStatement($qry, array($pid));
-           $display=1;
-	
-            
-                //print "<h1>".xl('History').":</h1>";
-                // printRecDataOne($history_data_array, getRecHistoryData ($pid), $N);
-                
-				//echo $result1;
-                //echo "   <table>\n";
-                //display_layout_rows('HIS', $result1);
-                //echo "   </table>\n";
-
-			 
-			 
-?>
-<ul style="list-style:none;">
-<li><a href="../summary/pnotes_full_add.php?<?php echo $urlparms; ?>" id="note" class="black-tooltip iframe" data-original-title="Tooltip on bottom" onclick='top.restoreSession()' data-toggle="tooltip" data-placement="bottom" title="Add Patient Notes"> <span class="fa-stack fa-lg">
-  <i class="fa fa-circle fa-stack-2x"></i>
-  <i class="fa fa-sticky-note-o fa-stack-1x fa-inverse"></i>
-</span></a></li>
-</ul>
-<?php $qry2 = "SELECT pnotes.body
-FROM pnotes
-WHERE pid = ?";
-          $pnotes = sqlStatement($qry2, array($pid));
-    while ($pnote = sqlFetchArray($pnotes)) {
-    ?>
-    <table class="table table-responsive">
-    <tr>
-  <th>Patient Notes</th>
-    <td><?php $str = $pnote['body']; $brk = explode('(',$str); $string = explode(')',$brk[1]); echo $brk[0].'<br>'.$string[1]; ?></td>
-  </tr>
-  </table>
-    <?php } ?>
-    <br>
- <!-- <a href="http://103.230.38.89/testc/interface/forms/vitals/new.php" class="element iframe rx_modal pull-right" data-toggle="tooltip" data-placement="top" title="Add Vitals">
-
- <span class="fa-stack fa-lg">
-  <i class="fa fa-circle fa-stack-2x"></i>
-  <i class="fa fa-stethoscope fa-stack-1x fa-inverse"></i>
-</span></a>
-<?php $qry2 = "SELECT date,bps,bpd,height,weight FROM mangoo.form_vitals WHERE pid = ?";
-          $vitals = sqlStatement($qry2, array($pid));
-    while ($vital = sqlFetchArray($vitals)) {
-    ?>
-    <table class="table table-responsive">
-    <tr>
-  <th>Vitals</th>
-    <td>Date:<?php echo $vital['date'] ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Height:<?php echo $vital['height'] ?>in <br>Weight:<?php echo $vital['weight'] ?>lbs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BP:<?php echo $vital['bps'] ?>mmHg</td>
-  </tr>
-  </table> -->
-    <?php } ?>
-<script>
-$(".iframe").fancybox( {
-  "left":10,"top":100,
- "overlayOpacity" : 0.0,
- "showCloseButton" : true,
- "frameHeight" : 550,
- "frameWidth" : 550
-  });
-</script>
-<br>
-
-<ul class="timeline">
-
-<?php 	while ($prow = sqlFetchArray($pdata)) { ?>
-                        <!-- timeline time label -->
-                            <li class="time-label">
-                                 <span class="bg-green">
-								 
-                                        <?php $newDate = date("d-m-Y", strtotime($prow['date'])); echo $newDate; ?>
-                                    </span>                             </li>
-                            <li>
-                                                                  <a id="encounter" href="../encounter/encounter_top.php?set_encounter=<?php echo $prow['encounter'] ?>">  <i class="fa fa-mail-reply-all bg-yellow uni" style="margin-left: 20px;padding: 6px;border-radius: 13px;" title="View Details"></i></a>
-                                                                <div class="timeline-item">
-                                    <h3 class="timeline-header">
-                                    
-                                    <div class="user-block" style="display: inline-block;">
-                                       
-                                                                                            <img src="https://d30y9cdsu7xlg0.cloudfront.net/png/23420-200.png" class="img-circle img-bordered-sm" alt="User Image">
-                                            
-                                        <span class="username">
-                                          <a href="#"><?php $doctorname = sqlStatement("SELECT username FROM users WHERE id=?", array($prow['provider_id']));  while($doctor = sqlFetchArray($doctorname)) { echo $doctor['username']; }?></a>
-                                          
-                                        </span>
-                                        <span class="description"><i class="fa fa-clock-o"></i> <?php echo $prow['date']; ?></span>
-										
-                                      </div><!-- /.user-block -->
-		
-									  <table class='table table-responsive table-striped' style="display: list-item">
-									  <tr>
-				
-<?php $qry_lab="select procedure_name from procedure_order a,procedure_order_code b where a.procedure_order_id=b.procedure_order_id and a.patient_id=? and a.encounter_id=?";	  
-    $qry_lab1=sqlStatement($qry_lab,array($pid,$prow['encounter']));
-	?>
-	<th>Procedure Name</th><td>
-	<?php while($qry_labdata = sqlFetchArray($qry_lab1) ) { ?> 
-				
-				<?php echo $qry_labdata['procedure_name']; ?><br>
-				
-<?php } ?>
-</td></tr>
-  </table>
-                                    </h3>
-
-                                   
-                                </div>
-                            </li>
-                                                   
-<?php } ?>
- <li>
-                            <i class="fa fa-clock-o bg-gray"></i>
-                        </li>
-                        <ul class="pull-right" style="padding-right:25px;padding-bottom:10px;">
-                        </ul>
-                    </ul>
-</div>
 </div>
 </div>
 </body>

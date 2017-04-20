@@ -52,7 +52,7 @@ if (isset($_GET['iSortCol_0'])) {
        
       }
       else {
-        $orderby .= "`" . escape_sql_column_name($aColumns[$iSortCol],array('patient_data','form_encounter','t_form_admit','billing')) . "` $sSortDir";
+        $orderby .= "`" . escape_sql_column_name($aColumns[$iSortCol],array('patient_data','form_encounter','t_form_admit','billing','payments')) . "` $sSortDir";
       }
 		}
 	}
@@ -73,7 +73,7 @@ if (isset($_GET['sSearch']) && $_GET['sSearch'] !== "") {
         "lname LIKE '$sSearch%' ";
     }
     else {
-      $where .= "`" . escape_sql_column_name($colname,array('patient_data','form_encounter','t_form_admit','billing')) . "` LIKE '$sSearch%' ";
+      $where .= "`" . escape_sql_column_name($colname,array('patient_data','form_encounter','t_form_admit','billing','payments')) . "` LIKE '$sSearch%' ";
     }
   }
   if ($where) $where .= ")";
@@ -95,7 +95,7 @@ for ($i = 0; $i < count($aColumns); ++$i) {
     }
 	
     else {
-      $where .= " `" . escape_sql_column_name($colname,array('patient_data','form_encounter','t_form_admit','billing')) . "` LIKE '$sSearch%'";
+      $where .= " `" . escape_sql_column_name($colname,array('patient_data','form_encounter','t_form_admit','billing','payments')) . "` LIKE '$sSearch%'";
     }
   }
 }
@@ -120,13 +120,13 @@ foreach ($aColumns as $colname) {
 	
   }
   else {
-    $sellist .= "`" . escape_sql_column_name($colname,array('patient_data','form_encounter','t_form_admit','billing')) . "`";
+    $sellist .= "`" . escape_sql_column_name($colname,array('patient_data','form_encounter','t_form_admit','billing','payments')) . "`";
   }
 }
 // Get total number of rows in the table.
 //
 
-$row = sqlQuery("SELECT COUNT(distinct(a.encounter)) AS count FROM form_encounter a,patient_data b,t_form_admit c where a.pid=b.pid and a.encounter=c.encounter and a.pc_catid=12 and c.status='admit' ");
+$row = sqlQuery("SELECT COUNT(distinct(a.encounter)) AS count FROM form_encounter a,patient_data b,t_form_admit c,payments d where a.pid=b.pid and a.pid=d.pid and a.encounter=c.encounter and a.pc_catid=12 and c.status='admit' ");
 
 $iTotal = $row['count'];
 
@@ -134,7 +134,7 @@ $iTotal = $row['count'];
 //
 
 
-$row = sqlQuery("SELECT COUNT(distinct(a.encounter)) AS count FROM form_encounter a,patient_data b,t_form_admit c where a.pid=b.pid and a.encounter=c.encounter and a.pc_catid=12 and c.status='admit'");
+$row = sqlQuery("SELECT COUNT(distinct(a.encounter)) AS count FROM form_encounter a,patient_data b,t_form_admit c,payments d where a.pid=b.pid and a.pid=d.pid and a.encounter=c.encounter and a.pc_catid=12 and c.status='admit'");
 
 
 $iFilteredTotal = $row['count'];
@@ -148,7 +148,7 @@ $out = array(
   "aaData"               => array()
 );
 
-$query ="SELECT $sellist FROM form_encounter a,patient_data b,t_form_admit c $where where a.pid=b.pid and a.encounter=c.encounter and a.pc_catid=12 and c.status='admit'  group by a.pid,a.encounter  order by $orderby, c.status ,a.encounter desc  $limit";
+$query ="SELECT $sellist FROM form_encounter a,patient_data b,t_form_admit c $where where a.pid=b.pid  and a.encounter=c.encounter and a.pc_catid=12 and c.status='admit'  group by a.pid,a.encounter  order by $orderby, c.status ,a.encounter desc  $limit";
 
 $res = sqlStatement($query);
 while ($row = sqlFetchArray($res)) {
@@ -169,8 +169,11 @@ while ($row = sqlFetchArray($res)) {
 	  $admit=$row['admit_to_ward'].' , '.$row['admit_to_bed'];
 	    $arow[] = $admit;
 	}
-	
-	
+	/*else if($colname == 'amount1') {
+		$advance = $row['amount1'];
+		$arow[] = $advance;
+	}
+	*/
     else if ($colname == 'DOB' || $colname == 'regdate' || $colname == 'ad_reviewed' || $colname == 'userdate1') {
       $arow[] = oeFormatShortDate($row[$colname]);
     }else if($colname=='admit_date')

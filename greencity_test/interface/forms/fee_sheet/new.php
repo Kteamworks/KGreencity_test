@@ -1577,9 +1577,7 @@ function setEnc() {
 	$.ajax({
 				type: "POST",
 				url: "post_inactive.php",
-				success: function(response){
-					alert(response);
-			
+				success: function(response){			
 				},
 				error:function(){
 					console.log(error);

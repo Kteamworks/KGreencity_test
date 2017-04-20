@@ -361,7 +361,7 @@ function thisLineItem($patient_id, $encounter_id, $rowcat, $description, $transd
    <?php xl('Qty','e'); ?>
   </th>
   <th align="right">
-   <?php xl('Dcotor Chrg','e'); ?>
+   <?php xl('Doctor Chrg','e'); ?>
   </th>
   <th align="right">
    <?php xl('Hospital Chrg','e'); ?>

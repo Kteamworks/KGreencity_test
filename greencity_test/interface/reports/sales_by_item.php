@@ -230,6 +230,7 @@ function thisLineItem($patient_id, $encounter_id, $rowcat, $description, $transd
 <div id="report_parameters">
 <input type='hidden' name='form_refresh' id='form_refresh' value=''/>
 <input type='hidden' name='form_csvexport' id='form_csvexport' value=''/>
+
 <table>
  <tr>
   <td width='630px'>
@@ -361,7 +362,7 @@ function thisLineItem($patient_id, $encounter_id, $rowcat, $description, $transd
         "JOIN form_encounter AS fe ON fe.pid = b.pid AND fe.encounter = b.encounter " .
         //"LEFT JOIN codes AS c ON c.code_type = ct.ct_id AND c.code = b.code AND c.modifier = b.modifier " .
         //"LEFT JOIN list_options AS lo ON lo.list_id = 'superbill' AND lo.option_id = c.superbill " .
-        "WHERE b.code not in ('INSURANCE DIFFERENCE AMOUNT','INSURANCE CO PAYMENT') AND b.billed=1 and b.activity = 1 AND b.fee != 0 AND " .
+        "WHERE b.code not in ('INSURANCE DIFFERENCE AMOUNT','INSURANCE CO PAYMENT') AND b.activity = 1 AND b.fee != 0 AND " .
         "b.date >= '$from_date 00:00:00' AND b.date <= '$to_date 23:59:59'";
       // If a facility was specified.
       if ($form_facility) {
@@ -512,6 +513,36 @@ function thisLineItem($patient_id, $encounter_id, $rowcat, $description, $transd
 <script language="Javascript">
  Calendar.setup({inputField:"form_from_date", ifFormat:"%Y-%m-%d", button:"img_from_date"});
  Calendar.setup({inputField:"form_to_date", ifFormat:"%Y-%m-%d", button:"img_to_date"});
+ $(document).ready(function() {
+ function swap( cells, x, y ){
+   if( x != y ){     
+ 
+   var $cell1 = cells[y][x];
+   var $cell2 = cells[x][y];
+   $cell1.replaceWith( $cell2.clone() );
+   $cell2.replaceWith( $cell1.clone() );
+    }
+}
+function tableswap() {
+var cells = [];
+$('table').find('tr').each(function(){
+    var row = [];
+    $(this).find('td').each(function(){
+       row.push( $(this) );    
+    });
+    cells.push( row );
+});
+
+for( var y = 0; y <= cells.length/2; y++ ){
+    for( var x = 0; x < cells[y].length; x++ ){
+        swap( cells, x, y );
+    }   
+}
+
+}
+ setTimeout(tableswap, 1000)
+ });
+
 </script>
 
 </html>
